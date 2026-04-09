@@ -5,6 +5,7 @@ import type {
   Section3Data,
   Section4Data,
   Section5Data,
+  Section6Data,
   Section7Data,
 } from '@/types'
 
@@ -120,6 +121,21 @@ export const MOCK_SECTION5: Section5Data = {
     waterAuthority:     94.19,
     safetyBuffer:        6,
   },
+}
+
+export const MOCK_SECTION6: Section6Data = {
+  builtValuePerSqmResidential: 14000,
+  builtValuePerSqmCommercial:  8000,
+  builtValuePerSqmEmployment:  6000,
+  existingCommercialValuePerSqm: 7000,
+  newPrimaryEmploymentArea:    0,
+  publicSpaceDevelopment:      500_000,
+  kindergartenConstruction:    300_000,
+  demolitionAndDeveloper:      800_000,
+  deferralYears:               3,
+  deferralRate:                6,
+  siteReductionFactor:         100,
+  levyRate:                    50,
 }
 
 export const MOCK_SECTION7: Section7Data = {

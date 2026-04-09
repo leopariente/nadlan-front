@@ -2,7 +2,7 @@ import { cn } from '@/lib/utils'
 import { SECTIONS, type SectionNumber } from '@/constants/sections'
 
 // Sections that have a real component implemented
-const IMPLEMENTED = new Set<SectionNumber>([1, 2, 3, 4, 5, 7])
+const IMPLEMENTED = new Set<SectionNumber>([1, 2, 3, 4, 5, 6, 7])
 
 interface Props {
   current: SectionNumber

@@ -7,6 +7,7 @@ import {
   MOCK_SECTION3,
   MOCK_SECTION4,
   MOCK_SECTION5,
+  MOCK_SECTION6,
   MOCK_SECTION7,
 } from '@/mocks/mockProject'
 import { Layout } from '@/components/layout/Layout'
@@ -16,8 +17,9 @@ import Section2PlanningRights from '@/components/sections/Section2PlanningRights
 import Section4MarketSurvey from '@/components/sections/Section4MarketSurvey'
 import Section5Levies from '@/components/sections/Section5Levies'
 import Section3Program from '@/components/sections/Section3Program'
+import Section6BettermentLevy from '@/components/sections/Section6BettermentLevy'
 import Section7InventoryValue from '@/components/sections/Section7InventoryValue'
-import type { Section1Data, Section2Data, Section3Data, Section4Data, Section5Data, Section7Data } from '@/types'
+import type { Section1Data, Section2Data, Section3Data, Section4Data, Section5Data, Section6Data, Section7Data } from '@/types'
 import { SECTIONS, type SectionNumber } from '@/constants/sections'
 
 // ─── Empty initial states ─────────────────────────────────────────────────────
@@ -87,6 +89,21 @@ const EMPTY_SECTION5: Section5Data = {
   },
 }
 
+const EMPTY_SECTION6: Section6Data = {
+  builtValuePerSqmResidential:  0,
+  builtValuePerSqmCommercial:   0,
+  builtValuePerSqmEmployment:   0,
+  existingCommercialValuePerSqm: 0,
+  newPrimaryEmploymentArea:     0,
+  publicSpaceDevelopment:       0,
+  kindergartenConstruction:     0,
+  demolitionAndDeveloper:       0,
+  deferralYears:                3,
+  deferralRate:                 6,
+  siteReductionFactor:          100,
+  levyRate:                     50,
+}
+
 const EMPTY_SECTION7: Section7Data = {
   vatPct: 18,
 }
@@ -118,6 +135,7 @@ export default function Report() {
   const [section3, setSection3] = useState<Section3Data>(isDemo ? MOCK_SECTION3 : EMPTY_SECTION3)
   const [section4, setSection4] = useState<Section4Data>(isDemo ? MOCK_SECTION4 : EMPTY_SECTION4)
   const [section5, setSection5] = useState<Section5Data>(isDemo ? MOCK_SECTION5 : EMPTY_SECTION5)
+  const [section6, setSection6] = useState<Section6Data>(isDemo ? MOCK_SECTION6 : EMPTY_SECTION6)
   const [section7, setSection7] = useState<Section7Data>(isDemo ? MOCK_SECTION7 : EMPTY_SECTION7)
 
   const sectionLabel = SECTIONS.find(s => s.number === currentSection)?.label ?? ''
@@ -196,6 +214,19 @@ export default function Report() {
           basementSqm={0}
           balconyTotalSqm={balconyTotalSqm}
           densityUnits={section2.densityUnits}
+        />
+      )
+      case 6: return (
+        <Section6BettermentLevy
+          data={section6}
+          onChange={setSection6}
+          existingResidentialArea={existingResidentialSqm}
+          existingUnits={section1.existingUnits}
+          existingCommercialArea={existingCommercialSqm}
+          newPrimaryResidentialArea={section2.residentialMainArea}
+          newResidentialUnits={section2.densityUnits}
+          newPrimaryCommercialArea={section2.commercialMainArea}
+          yad2PricePerSqm={section4.secondaryApartments.selectedPricePerSqm}
         />
       )
       case 7: return (
