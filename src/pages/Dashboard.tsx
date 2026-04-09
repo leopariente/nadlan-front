@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { loadProjects } from '@/store/projectsSlice'
+import { loadProjects } from '@/store/projects/projectActions'
 
 export default function Dashboard() {
   const navigate = useNavigate()

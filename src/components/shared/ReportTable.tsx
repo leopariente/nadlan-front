@@ -1,4 +1,3 @@
-import type { Report } from '@/types/report'
 import { CurrencyInput } from './CurrencyInput'
 import { formatCurrency, formatNumber, cn } from '@/lib/utils'
 
@@ -19,7 +18,7 @@ type InputCol<T> = BaseCol & {
 type CalcCol<T> = BaseCol & {
   type: 'calculated'
   key: string
-  calculated: (row: T, allRows: T[], report: Report) => number | string
+  calculated: (row: T, allRows: T[]) => number | string
   format?: 'currency' | 'number' | 'pct' | 'text'
 }
 
@@ -51,7 +50,6 @@ interface ReportTableProps<T extends { id: string }> {
   onAddRow?: () => void
   showAddRow?: boolean
   caption?: string
-  report: Report
   className?: string
 }
 
@@ -60,7 +58,7 @@ function formatValue(val: number | string, format?: string): string {
   if (format === 'currency') return formatCurrency(val)
   if (format === 'pct') return `${formatNumber(val, 1)}%`
   if (format === 'number') return formatNumber(val, 1)
-  return formatCurrency(val) // default: currency
+  return formatCurrency(val)
 }
 
 export function ReportTable<T extends { id: string }>({
@@ -71,7 +69,6 @@ export function ReportTable<T extends { id: string }>({
   onAddRow,
   showAddRow,
   caption,
-  report,
   className,
 }: ReportTableProps<T>) {
   return (
@@ -119,7 +116,7 @@ export function ReportTable<T extends { id: string }>({
                   )
 
                   if (col.type === 'calculated') {
-                    const rawVal = col.calculated(row, rows, report)
+                    const rawVal = col.calculated(row, rows)
                     const isNeg = typeof rawVal === 'number' && rawVal < 0
                     return (
                       <td key={col.key} className={cn(cellClass, 'bg-gray-100/70')}>

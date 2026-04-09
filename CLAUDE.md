@@ -1,115 +1,161 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+> **Maintenance rule:** After any change that affects this file — new section implemented, file moved, shared component added, type system changed, pattern updated — update CLAUDE.md before finishing the task.
 
-# nadlan-front — דוח אפס
+B2B SaaS tool for Israeli real estate feasibility reports (תמ"א 38 / pinui-binui). RTL Hebrew UI, desktop-first.
 
-B2B SaaS tool for Israeli real estate feasibility reports. RTL Hebrew UI, desktop-first.
+## Component Rule
+
+**One component per file.** Every React component lives in its own `ComponentName.tsx` file. Never define multiple components in a single file.
 
 ## Tech Stack
 
-- **React 19** + **Vite** + **TypeScript** (strict mode)
-- **Tailwind CSS v3** + shadcn/ui components (Radix UI primitives)
-- **Redux Toolkit** — global state (`src/store/`)
-- **React Router v6** — `/` (Dashboard) and `/report/:id` (Report editor)
-- **immer** — immutable updates in step components
-- **MSW v2** — mock backend in `src/mocks/` (currently disabled; real backend at `http://localhost:8000`)
+- React 19 + Vite + TypeScript (strict)
+- Tailwind CSS v3 + shadcn/ui (Radix UI)
+- Redux Toolkit — only for `projects` list on Dashboard
+- React Router v6 — `/` Dashboard, `/report/:id` Report editor
+- Real backend at `http://localhost:8000`
 
 ## Commands
 
 ```bash
-npm run dev      # start dev server
-npm run build    # tsc + vite build
-npm run lint     # eslint
+npm run dev    # dev server
+npm run build  # tsc + vite build (ALWAYS run to verify changes)
+npm run lint   # eslint
 ```
-
-## Backend
-
-All API calls go through `src/store/reportSlice/reportApi.ts` via an axios instance with `baseURL: 'http://localhost:8000'`. This is the only file to change when the backend URL changes.
-
-MSW is disabled in `src/main.tsx`. To re-enable for local development without a backend, restore the `enableMocking()` body in `main.tsx`.
 
 ## Project Structure
 
 ```
 src/
-  store/
-    reportSlice/
-      reportSlice.ts   # Redux slice: report, currentStep, saveStatus, loadStatus
-      reportActions.ts # loadReport, saveReport async thunks
-      reportApi.ts     # axios calls: fetchReport, patchReport, fetchProjects
-      index.ts         # re-exports
-    projectsSlice.ts   # Redux slice: projects list for Dashboard, loadProjects thunk
-    store.ts           # configureStore — reducers: report, projects
-  hooks/
-    redux.ts           # useAppSelector, useAppDispatch (typed wrappers)
-  types/
-    report.ts          # All TypeScript interfaces (Report, Step1Data…Step8Data, ProjectSummary)
-  lib/
-    calculations.ts    # Pure functions — ALL derived/calculated fields live here
-    utils.ts           # cn(), formatCurrency(), formatNumber(), parseCurrencyInput()
-  mocks/
-    herbertSamuel33.ts # Seed data — Herbert Samuel 33, Hadera (canonical shape reference)
-    handlers.ts        # MSW handlers (disabled but kept as reference)
-  components/
-    layout/            # TopBar, Sidebar, Layout
-    shared/            # ReportTable, CurrencyInput, StatusIndicator
-    steps/             # Step1Background … Step9Summary
-    ui/                # shadcn components (button, collapsible, separator)
-  pages/
-    Dashboard.tsx      # dispatches loadProjects on mount, reads from projects Redux slice
-    Report.tsx         # dispatches loadReport(id) on mount, autosaves on report change
+  types.ts                          # barrel — ALL type imports come from here
+  types/                            # (deleted — types live near their components)
   constants/
-    steps.ts           # STEPS array (9 steps, used by Sidebar and Report)
+    sections.ts                     # SECTIONS array + SectionNumber type (9 sections)
+  pages/
+    Dashboard.tsx                   # reads from projects Redux slice
+    Report.tsx                      # local useState for all section data, no Redux
+  store/
+    store.ts                        # configureStore — only 'projects' reducer
+    projects/
+      types.ts                      # ProjectSummary interface
+      projectsSlice.ts              # Redux slice for projects list
+      projectsApi.ts                # axios GET /api/reports
+      projectActions.ts             # loadProjects async thunk
+  components/
+    layout/
+      Layout.tsx                    # fixed sidebar (RTL end-0) + main content
+      SectionNav.tsx                # step indicator nav (9 sections)
+      TopBar.tsx                    # fixed header
+    shared/
+      Card.tsx                      # <Card title="..." bodyClassName="p-5"> — section card wrapper
+      Field.tsx                     # <Field label="..." unit?="..."> — label + input wrapper
+      formStyles.ts                 # inputClass string (shared across form inputs)
+      RowVariants.tsx               # ComputedRow, Section1Row, InlineInputRow, KeyRow
+      TabSwitcher.tsx               # <TabSwitcher tabs={[{key,label}]} activeTab onChange>
+      CurrencyInput.tsx             # controlled currency input (formats on blur)
+      ReportTable.tsx               # generic configurable table
+    sections/
+      Section1ExistingState/
+        types.ts                    # FloorUse, FloorRow, Section1Data
+        index.tsx                   # parcel card + floors table + metrics grid
+        FloorsTable.tsx             # floor rows table with add/delete
+      Section2PlanningRights/
+        types.ts                    # GeneralPlanData, Section2Data
+        index.tsx                   # tab switch: detailed | general
+        DetailedPlanTab.tsx         # residential + commercial cards
+        GeneralPlanTab.tsx          # general plan (coverage %, floors, parking…)
+      Section4MarketSurvey/
+        types.ts                    # Transaction, Section4Data
+        index.tsx                   # tab switch: new | secondary | commercial
+        TransactionsTab.tsx         # transactions table + stats + selected price
+        CommercialTab.tsx           # commercial % of residential
+      Section5Levies/
+        types.ts                    # Section5Data
+        index.tsx                   # tab switch: rates | calc
+        RatesTab.tsx                # flat rate toggle + detailed rate inputs
+        CalcTab.tsx                 # base data table + levy calculation table
+    ui/
+      button.tsx / collapsible.tsx / separator.tsx   # shadcn primitives
+  lib/
+    utils.ts                        # cn(), formatCurrency(), formatNumber(), parseCurrencyInput()
+  hooks/
+    redux.ts                        # useAppSelector, useAppDispatch
+```
+
+## Implemented vs Pending
+
+**Implemented (sections 1, 2, 4, 5):** Full UI, local state, cross-section derived values.  
+**Pending (sections 3, 6, 7, 8, 9):** Render `<ComingSoon>` placeholder in Report.tsx.  
+**Redux / backend integration:** Only projects list (Dashboard). Report editor uses `useState` — no load/save yet.
+
+## Type System
+
+All types are defined in the local `types.ts` of the component they belong to.  
+**Always import from `@/types` (the barrel). Never import from a local types.ts directly.**
+
+```ts
+import type { Section1Data, Section5Data, ProjectSummary } from '@/types'
+```
+
+To add a type: define it in the relevant section's `types.ts`, then re-export it from `src/types.ts`.
+
+## Shared Components — Usage
+
+```tsx
+// Card — section container
+<Card title="פרטי חלקה">…</Card>
+<Card title="…" bodyClassName="p-5 space-y-5">…</Card>  // when children need vertical gap
+
+// Field — label wrapper for inputs
+<Field label="גוש">…</Field>
+<Field label="אגרות בנייה" unit='₪/מ"ר'>…</Field>
+
+// inputClass — apply to any <input> / <select>
+import { inputClass } from '@/components/shared/formStyles'
+<input className={inputClass} … />
+
+// RowVariants — display rows inside cards
+<ComputedRow label="…" value={num} unit='מ"ר' />   // gray bg, derived value
+<Section1Row label="…" value={num} />               // darker bg, "מסעיף 1" badge
+<InlineInputRow label="…" value={n} onChange={fn} unit="%" disabled={readOnly} />
+<KeyRow label="…" value={num} />                    // amber bg, key output
+
+// TabSwitcher
+<TabSwitcher tabs={[{key:'a',label:'…'},{key:'b',label:'…'}]} activeTab={tab} onChange={setTab} />
 ```
 
 ## State Architecture
 
-**Redux** owns: `report`, `currentStep`, `saveStatus`, `loadStatus`, `projects`
+**Report.tsx** owns all section state via `useState`. No Redux for report data yet.  
+Cross-section values are derived inline in `Report.tsx` and passed as props.
 
-**Two slices:**
-- `reportSlice` — single report being edited
-- `projectsSlice` — project list for Dashboard
-
-**Data flow — Dashboard:**
-1. `Dashboard` mounts → dispatches `loadProjects()` → `GET /api/reports` → populates `projects[]`
-
-**Data flow — Report editor:**
-1. `Report` mounts → dispatches `loadReport(id)` → `GET /api/reports/:id` → sets `report` in Redux
-2. User edits → component dispatches `updateStep({ key: 'stepN', value: newData })`
-3. `Report.tsx` watches `report` ref → debounces 500ms → dispatches `saveReport` → `PATCH /api/reports/:id`
-
-## Key Patterns
-
-### Dispatching step updates
 ```ts
-const dispatch = useAppDispatch()
-dispatch(updateStep({ key: 'step1', value: { ...report.step1, someField: newValue } }))
+// Section components receive: data, onChange, readOnly?, and cross-section derived props
+// onChange always replaces the full section object:
+onChange({ ...data, someField: newValue })
 ```
 
-### Calculated fields
-Never stored in Redux or sent to the backend — always derived on render:
-```ts
-import { calcBettermentLevy } from '@/lib/calculations'
-const levy = calcBettermentLevy(report)  // pure function, no side effects
-```
-
-### Adding a new step input field
-1. Add the field to the relevant interface in `src/types/report.ts`
-2. Update seed data in `src/mocks/herbertSamuel33.ts`
-3. Add any derived calculations to `src/lib/calculations.ts`
-4. Update the step component to read/dispatch the field
+**Dashboard** uses Redux: `projects/projectsSlice` + `loadProjects` thunk → `GET /api/reports`.
 
 ## TypeScript Constraints
 
 - `erasableSyntaxOnly: true` — no `enum` or `namespace`; use `const` objects + union types
-- `noUnusedLocals/Parameters` — all imports and params must be used
-- `verbatimModuleSyntax` — use `import type { ... }` for type-only imports
+- `noUnusedLocals/Parameters` — every import and destructured param must be used
+- `verbatimModuleSyntax` — use `import type { … }` for type-only imports
 - `strict: true` — no implicit any, strict null checks
 
 ## RTL Notes
 
-- `dir="rtl"` is set on `<html>` in `index.html`
-- Use logical CSS properties: `ms-*`/`me-*`/`ps-*`/`pe-*` instead of `ml-*`/`mr-*`/`pl-*`/`pr-*`
-- Sidebar is `fixed end-0` (right side visually in RTL)
-- Main content uses `me-64` to clear the sidebar
+- `dir="rtl"` on `<html>` in index.html
+- Use logical CSS: `ms-*`/`me-*`/`ps-*`/`pe-*` — never `ml-*`/`mr-*`/`pl-*`/`pr-*`
+- Sidebar: `fixed end-0` (right side in RTL). Main content: `me-64`
+
+## Adding a New Section
+
+1. Create `src/components/sections/SectionN.../` directory
+2. Add `types.ts` with the section's data interface
+3. Export the type from `src/types.ts`
+4. Create `index.tsx` (main component) + sub-files as needed
+5. Add section state (`useState`) and derived values in `Report.tsx`
+6. Add `case N:` in `renderSection()` in `Report.tsx`

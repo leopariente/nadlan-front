@@ -1,10 +1,8 @@
 import { configureStore } from '@reduxjs/toolkit'
-import reportReducer from './reportSlice'
-import projectsReducer from './projectsSlice'
+import projectsReducer from './projects/projectsSlice'
 
 export const store = configureStore({
   reducer: {
-    report: reportReducer,
     projects: projectsReducer,
   },
 })
