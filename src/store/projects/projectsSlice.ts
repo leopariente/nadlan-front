@@ -1,8 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { ProjectSummary } from '@/types'
 import { loadProjects } from './projectActions'
-
-
+import { MOCK_PROJECT } from '@/mocks/mockProject'
 
 type LoadStatus = 'idle' | 'loading' | 'loaded' | 'error'
 
@@ -12,7 +11,7 @@ interface ProjectsState {
 }
 
 const initialState: ProjectsState = {
-  projects: [],
+  projects: [MOCK_PROJECT],
   loadStatus: 'idle',
 }
 

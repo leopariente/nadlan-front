@@ -1,5 +1,14 @@
 import { useState } from 'react'
 import { useParams } from 'react-router-dom'
+import {
+  MOCK_ID,
+  MOCK_SECTION1,
+  MOCK_SECTION2,
+  MOCK_SECTION3,
+  MOCK_SECTION4,
+  MOCK_SECTION5,
+  MOCK_SECTION7,
+} from '@/mocks/mockProject'
 import { Layout } from '@/components/layout/Layout'
 import SectionNav from '@/components/layout/SectionNav'
 import Section1ExistingState from '@/components/sections/Section1ExistingState'
@@ -102,13 +111,14 @@ function ComingSoon({ label }: { label: string }) {
 
 export default function Report() {
   const { id } = useParams<{ id: string }>()
+  const isDemo = id === MOCK_ID
   const [currentSection, setCurrentSection] = useState<SectionNumber>(1)
-  const [section1, setSection1] = useState<Section1Data>(EMPTY_SECTION1)
-  const [section2, setSection2] = useState<Section2Data>(EMPTY_SECTION2)
-  const [section3, setSection3] = useState<Section3Data>(EMPTY_SECTION3)
-  const [section4, setSection4] = useState<Section4Data>(EMPTY_SECTION4)
-  const [section5, setSection5] = useState<Section5Data>(EMPTY_SECTION5)
-  const [section7, setSection7] = useState<Section7Data>(EMPTY_SECTION7)
+  const [section1, setSection1] = useState<Section1Data>(isDemo ? MOCK_SECTION1 : EMPTY_SECTION1)
+  const [section2, setSection2] = useState<Section2Data>(isDemo ? MOCK_SECTION2 : EMPTY_SECTION2)
+  const [section3, setSection3] = useState<Section3Data>(isDemo ? MOCK_SECTION3 : EMPTY_SECTION3)
+  const [section4, setSection4] = useState<Section4Data>(isDemo ? MOCK_SECTION4 : EMPTY_SECTION4)
+  const [section5, setSection5] = useState<Section5Data>(isDemo ? MOCK_SECTION5 : EMPTY_SECTION5)
+  const [section7, setSection7] = useState<Section7Data>(isDemo ? MOCK_SECTION7 : EMPTY_SECTION7)
 
   const sectionLabel = SECTIONS.find(s => s.number === currentSection)?.label ?? ''
 
