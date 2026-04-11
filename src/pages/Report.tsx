@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import {
-  MOCK_ID,
   MOCK_SECTION1,
   MOCK_SECTION2,
   MOCK_SECTION3,
@@ -19,100 +18,9 @@ import Section5Levies from '@/components/sections/Section5Levies'
 import Section3Program from '@/components/sections/Section3Program'
 import Section6BettermentLevy from '@/components/sections/Section6BettermentLevy'
 import Section7InventoryValue from '@/components/sections/Section7InventoryValue'
+import Section9Summary from '@/components/sections/Section9Summary'
 import type { Section1Data, Section2Data, Section3Data, Section4Data, Section5Data, Section6Data, Section7Data } from '@/types'
 import { SECTIONS, type SectionNumber } from '@/constants/sections'
-
-// ─── Empty initial states ─────────────────────────────────────────────────────
-
-const EMPTY_SECTION1: Section1Data = {
-  gush: '',
-  helka: '',
-  address: '',
-  registeredArea: 0,
-  ownershipShare: '',
-  existingUnits: 0,
-  floors: [],
-}
-
-const EMPTY_SECTION2: Section2Data = {
-  planType: 'detailed',
-
-  residentialMainArea: 0,
-  residentialServiceArea: 0,
-  commercialMainArea: 0,
-  commercialServiceArea: 0,
-  densityUnits: 0,
-  mamadSqm: 12,
-  tenantBonusSqmPerUnit: 6,
-  commercialTenantBonusPct: 25,
-
-  generalPlan: {
-    coveragePct: 50,
-    floors: 9,
-    floorplatePct: 75,
-    avgUnitSqm: 100,
-    parkingPerUnit: 1.5,
-    parkingSqm: 45,
-    basementCoveragePct: 85,
-  },
-}
-
-const EMPTY_UNDERGROUND_ROW = { parkingPerUnit: 0, parkingAboveGround: 0, parkingUnderground: 0, avgParkingSqm: 45 }
-const EMPTY_UNDERGROUND_SPECIAL = { additionalSqm: 0, parkingSpots: 0, avgParkingSqm: 45 }
-
-const EMPTY_SECTION3: Section3Data = {
-  tenantRow: { mainAreaPerUnit: 0, mamadPerUnit: 12, sharedAreaPerUnit: 8, openBalconyPerUnit: 12, roofBalconySqm: 0 },
-  developerRow: { mainAreaPerUnit: 0, mamadPerUnit: 12, sharedAreaPerUnit: 8, openBalconyPerUnit: 12, roofBalconySqm: 0 },
-  commercial: { sqm: 0 },
-  publicBuildings: { sqm: 0 },
-  underground: {
-    tenantRow: EMPTY_UNDERGROUND_ROW,
-    developerRow: EMPTY_UNDERGROUND_ROW,
-    commercial: EMPTY_UNDERGROUND_SPECIAL,
-    disabled: EMPTY_UNDERGROUND_SPECIAL,
-    publicBuildings: EMPTY_UNDERGROUND_SPECIAL,
-  },
-}
-
-const EMPTY_SECTION5: Section5Data = {
-  useFlatRate: false,
-  rates: {
-    constructionPermit: 37.65,
-    roadLand:           82.51,
-    roadBuilding:      118.28,
-    sidewalkLand:       67.51,
-    sidewalkBuilding:   96.77,
-    drainageLand:       32.08,
-    drainageBuilding:   57.53,
-    waterAuthority:     94.19,
-    safetyBuffer:        6,
-  },
-}
-
-const EMPTY_SECTION6: Section6Data = {
-  builtValuePerSqmResidential:  0,
-  builtValuePerSqmCommercial:   0,
-  builtValuePerSqmEmployment:   0,
-  existingCommercialValuePerSqm: 0,
-  newPrimaryEmploymentArea:     0,
-  publicSpaceDevelopment:       0,
-  kindergartenConstruction:     0,
-  demolitionAndDeveloper:       0,
-  deferralYears:                3,
-  deferralRate:                 6,
-  siteReductionFactor:          100,
-  levyRate:                     50,
-}
-
-const EMPTY_SECTION7: Section7Data = {
-  vatPct: 18,
-}
-
-const EMPTY_SECTION4: Section4Data = {
-  newApartments:       { transactions: [], selectedPricePerSqm: 0 },
-  secondaryApartments: { transactions: [], selectedPricePerSqm: 0 },
-  commercial:          { commercialPctOfResidential: 85 },
-}
 
 // ─── Placeholder for unimplemented sections ───────────────────────────────────
 
@@ -128,15 +36,14 @@ function ComingSoon({ label }: { label: string }) {
 
 export default function Report() {
   const { id } = useParams<{ id: string }>()
-  const isDemo = id === MOCK_ID
   const [currentSection, setCurrentSection] = useState<SectionNumber>(1)
-  const [section1, setSection1] = useState<Section1Data>(isDemo ? MOCK_SECTION1 : EMPTY_SECTION1)
-  const [section2, setSection2] = useState<Section2Data>(isDemo ? MOCK_SECTION2 : EMPTY_SECTION2)
-  const [section3, setSection3] = useState<Section3Data>(isDemo ? MOCK_SECTION3 : EMPTY_SECTION3)
-  const [section4, setSection4] = useState<Section4Data>(isDemo ? MOCK_SECTION4 : EMPTY_SECTION4)
-  const [section5, setSection5] = useState<Section5Data>(isDemo ? MOCK_SECTION5 : EMPTY_SECTION5)
-  const [section6, setSection6] = useState<Section6Data>(isDemo ? MOCK_SECTION6 : EMPTY_SECTION6)
-  const [section7, setSection7] = useState<Section7Data>(isDemo ? MOCK_SECTION7 : EMPTY_SECTION7)
+  const [section1, setSection1] = useState<Section1Data>(MOCK_SECTION1)
+  const [section2, setSection2] = useState<Section2Data>(MOCK_SECTION2)
+  const [section3, setSection3] = useState<Section3Data>(MOCK_SECTION3)
+  const [section4, setSection4] = useState<Section4Data>(MOCK_SECTION4)
+  const [section5, setSection5] = useState<Section5Data>(MOCK_SECTION5)
+  const [section6, setSection6] = useState<Section6Data>(MOCK_SECTION6)
+  const [section7, setSection7] = useState<Section7Data>(MOCK_SECTION7)
 
   const sectionLabel = SECTIONS.find(s => s.number === currentSection)?.label ?? ''
 
@@ -149,14 +56,13 @@ export default function Report() {
     .filter(f => f.use === 'מסחר')
     .reduce((sum, f) => sum + f.floorArea, 0)
 
-  // Section 1 total gross (floor + balcony for all floors)
   const existingGrossSqm = section1.floors
     .reduce((sum, f) => sum + f.floorArea + f.balconyArea, 0)
 
   const balconyTotalSqm = section1.floors
     .reduce((sum, f) => sum + f.balconyArea, 0)
 
-  // Section 2 derived (detailed plan values; general plan would override these in future)
+  // Section 2 derived
   const s2ResidentialGross = section2.residentialMainArea + section2.residentialServiceArea
   const s2CommercialGross  = section2.commercialMainArea  + section2.commercialServiceArea
 
@@ -174,6 +80,15 @@ export default function Report() {
       : section4.secondaryApartments.selectedPricePerSqm
   const s4CommercialPrice  =
     s4ResidentialPrice * (section4.commercial.commercialPctOfResidential / 100)
+
+  // Section 9 inputs — derived from sections 1, 2, 3, and 7
+  const s9TotalNewUnits          = section2.densityUnits
+  const s9TotalFloorAreaProject  = existingWithBonus + developerFloorplateSqm
+  const s9CompensationPerUnit    = existingWithBonus / (section1.existingUnits || 1)
+  const s9VatFactor              = 1 + section7.vatPct / 100
+  const s9ResRevenueK            = Math.round(developerFloorplateSqm * s4ResidentialPrice / 1000)
+  const s9CommRevenueK           = Math.round(developerCommercialSqm * s4CommercialPrice  / 1000)
+  const s9TotalDeveloperRevenue  = Math.round(s9ResRevenueK / s9VatFactor) + s9CommRevenueK
 
   function renderSection() {
     switch (currentSection) {
@@ -238,6 +153,18 @@ export default function Report() {
           developerCommercialSqm={developerCommercialSqm}
           residentialPricePerSqm={s4ResidentialPrice}
           commercialPricePerSqm={s4CommercialPrice}
+        />
+      )
+      case 9: return (
+        <Section9Summary
+          existingUnits={section1.existingUnits}
+          newTotalUnits={s9TotalNewUnits}
+          totalFloorAreaProject={s9TotalFloorAreaProject}
+          compensationPerUnit={s9CompensationPerUnit}
+          developerUnitsForSale={developerUnits}
+          developerFloorAreaForSale={developerFloorplateSqm}
+          totalDeveloperRevenue={s9TotalDeveloperRevenue}
+          totalConstructionCosts={0}
         />
       )
       default: return <ComingSoon label={sectionLabel} />

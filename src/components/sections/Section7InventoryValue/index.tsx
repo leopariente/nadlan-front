@@ -1,9 +1,7 @@
-import { cn } from '@/lib/utils'
+import { cn, fmt } from '@/lib/utils'
 import { Card } from '@/components/shared/Card'
 import { inputClass } from '@/components/shared/formStyles'
 import type { Section7Data } from '@/types'
-
-const fmt = (n: number) => Math.round(n).toLocaleString('he-IL')
 
 interface Props {
   data: Section7Data

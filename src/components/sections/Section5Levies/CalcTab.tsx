@@ -1,9 +1,11 @@
-import { cn } from '@/lib/utils'
+import { cn, fmt } from '@/lib/utils'
 import { Card } from '@/components/shared/Card'
 import type { Section5Data } from '@/types'
 
-const fmt  = (n: number) => Math.round(n).toLocaleString('he-IL')
 const fmtR = (n: number) => n.toLocaleString('he-IL', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+
+const EXISTING_CREDIT_FACTOR = 0.8   // קיזוז 80% משטח קיים
+const FLAT_RATE_PER_SQM      = 500   // ₪ למ"ר עילי (תעריף אחיד)
 
 interface Props {
   data: Section5Data
@@ -30,7 +32,7 @@ export function CalcTab({
   const { rates, useFlatRate } = data
 
   const allSurface     = residentialGross + commercialGross + basementSqm + balconyTotalSqm
-  const existingCredit = existingGrossSqm * 0.8
+  const existingCredit = existingGrossSqm * EXISTING_CREDIT_FACTOR
   const netNew         = allSurface - existingCredit
   const aboveGround    = residentialGross + commercialGross
 
@@ -48,7 +50,7 @@ export function CalcTab({
   const subtotal   = levyRows.reduce((s, r) => s + r.total, 0)
   const finalTotal = subtotal * (1 + rates.safetyBuffer / 100)
   const perSqm     = residentialGross > 0 ? finalTotal / residentialGross : 0
-  const flatTotal  = aboveGround * 500
+  const flatTotal  = aboveGround * FLAT_RATE_PER_SQM
 
   const baseDataRows = [
     { label: 'שטח המגרש נטו (קרקע)',             value: registeredArea,  unit: 'מ"ר' },

@@ -63,6 +63,4 @@ export function specialUndergroundSqm(row: UndergroundSpecialRow): number {
   return row.parkingSpots * row.avgParkingSqm
 }
 
-export function fmt(n: number): string {
-  return Math.round(n).toLocaleString('he-IL')
-}
+export { fmt } from '@/lib/utils'

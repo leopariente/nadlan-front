@@ -1,11 +1,7 @@
+import { fmt } from '@/lib/utils'
+import { inputCls } from './tableUtils'
 import { Card } from '@/components/shared/Card'
 import type { Section6Data } from '@/types'
-
-const fmt = (n: number) => Math.round(n).toLocaleString('he-IL')
-
-const inputCls =
-  'w-28 rounded border border-slate-200 bg-white px-2 py-1.5 text-sm text-right tabular-nums text-slate-800 ' +
-  'focus:outline-none focus:ring-2 focus:ring-blue-500'
 
 interface Props {
   data: Section6Data
