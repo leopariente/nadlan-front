@@ -41,7 +41,7 @@ export function GeneralPlanTab({ data, onChange, registeredArea, readOnly = fals
 
   return (
     <Card title="תכנית כוללנית" bodyClassName="p-5 space-y-5">
-      <div className="grid grid-cols-2 gap-x-6 gap-y-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
         <Field label="תכסית %">{numInput('coveragePct', '50')}</Field>
         <Field label="מס׳ קומות">{numInput('floors', '9')}</Field>
       </div>
@@ -72,7 +72,7 @@ export function GeneralPlanTab({ data, onChange, registeredArea, readOnly = fals
 
       <KeyRow label='סה"כ יח"ד (שטח ברוטו ÷ שטח ממוצע)' value={totalUnits} unit='יח"ד' />
 
-      <div className="grid grid-cols-2 gap-x-6 gap-y-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
         <Field label='חניות ליח"ד'>{numInput('parkingPerUnit', '1.5')}</Field>
         <Field label='שטח חניה תת"ק (מ"ר)'>{numInput('parkingSqm', '45')}</Field>
       </div>

@@ -43,14 +43,14 @@ export default function Section1ExistingState({ data, onChange, readOnly = false
   return (
     <div className="space-y-5">
       <Card title="פרטי חלקה">
-        <div className="grid grid-cols-3 gap-x-6 gap-y-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-4">
           <Field label="גוש">
             <input
               type="text"
               className={inputClass}
               value={data.gush}
-              disabled={readOnly}
-              onChange={e => setField('gush', e.target.value)}
+              disabled
+              readOnly
             />
           </Field>
 
@@ -59,8 +59,8 @@ export default function Section1ExistingState({ data, onChange, readOnly = false
               type="text"
               className={inputClass}
               value={data.helka}
-              disabled={readOnly}
-              onChange={e => setField('helka', e.target.value)}
+              disabled
+              readOnly
             />
           </Field>
 
@@ -121,7 +121,7 @@ export default function Section1ExistingState({ data, onChange, readOnly = false
         />
       </Card>
 
-      <div className="grid grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <MetricCard label='סה"כ שטח דירתי בנוי' value={totalResidentialArea} />
         <MetricCard label='סה"כ שטח מסחרי בנוי' value={totalCommercialArea} />
         <MetricCard label='סה"כ שטח בנוי ברוטו' value={totalGrossArea} />

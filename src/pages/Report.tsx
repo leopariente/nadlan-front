@@ -1,14 +1,16 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
+import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import {
-  MOCK_SECTION1,
-  MOCK_SECTION2,
-  MOCK_SECTION3,
-  MOCK_SECTION4,
-  MOCK_SECTION5,
-  MOCK_SECTION6,
-  MOCK_SECTION7,
-} from '@/mocks/mockProject'
+  initReport,
+  updateSection1,
+  updateSection2,
+  updateSection3,
+  updateSection4,
+  updateSection5,
+  updateSection6,
+  updateSection7,
+} from '@/store/reportData/reportDataSlice'
 import { Layout } from '@/components/layout/Layout'
 import SectionNav from '@/components/layout/SectionNav'
 import Section1ExistingState from '@/components/sections/Section1ExistingState'
@@ -19,7 +21,6 @@ import Section3Program from '@/components/sections/Section3Program'
 import Section6BettermentLevy from '@/components/sections/Section6BettermentLevy'
 import Section7InventoryValue from '@/components/sections/Section7InventoryValue'
 import Section9Summary from '@/components/sections/Section9Summary'
-import type { Section1Data, Section2Data, Section3Data, Section4Data, Section5Data, Section6Data, Section7Data } from '@/types'
 import { SECTIONS, type SectionNumber } from '@/constants/sections'
 
 // ─── Placeholder for unimplemented sections ───────────────────────────────────
@@ -36,16 +37,27 @@ function ComingSoon({ label }: { label: string }) {
 
 export default function Report() {
   const { id } = useParams<{ id: string }>()
+  const dispatch = useAppDispatch()
   const [currentSection, setCurrentSection] = useState<SectionNumber>(1)
-  const [section1, setSection1] = useState<Section1Data>(MOCK_SECTION1)
-  const [section2, setSection2] = useState<Section2Data>(MOCK_SECTION2)
-  const [section3, setSection3] = useState<Section3Data>(MOCK_SECTION3)
-  const [section4, setSection4] = useState<Section4Data>(MOCK_SECTION4)
-  const [section5, setSection5] = useState<Section5Data>(MOCK_SECTION5)
-  const [section6, setSection6] = useState<Section6Data>(MOCK_SECTION6)
-  const [section7, setSection7] = useState<Section7Data>(MOCK_SECTION7)
+
+  // Ensure report data is initialized for this ID
+  useEffect(() => {
+    if (id) dispatch(initReport({ id }))
+  }, [id, dispatch])
+
+  const sections = useAppSelector(s => s.reportData.reports[id ?? ''])
 
   const sectionLabel = SECTIONS.find(s => s.number === currentSection)?.label ?? ''
+
+  if (!sections) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-slate-400 text-sm">
+        טוען...
+      </div>
+    )
+  }
+
+  const { section1, section2, section3, section4, section5, section6, section7 } = sections
 
   // Cross-section values derived from Section 1
   const existingResidentialSqm = section1.floors
@@ -92,11 +104,16 @@ export default function Report() {
 
   function renderSection() {
     switch (currentSection) {
-      case 1: return <Section1ExistingState data={section1} onChange={setSection1} />
+      case 1: return (
+        <Section1ExistingState
+          data={section1}
+          onChange={data => dispatch(updateSection1({ id: id!, data }))}
+        />
+      )
       case 2: return (
         <Section2PlanningRights
           data={section2}
-          onChange={setSection2}
+          onChange={data => dispatch(updateSection2({ id: id!, data }))}
           registeredArea={section1.registeredArea}
           existingResidentialSqm={existingResidentialSqm}
           existingUnits={section1.existingUnits}
@@ -106,7 +123,7 @@ export default function Report() {
       case 3: return (
         <Section3Program
           data={section3}
-          onChange={setSection3}
+          onChange={data => dispatch(updateSection3({ id: id!, data }))}
           developerUnits={developerUnits}
           developerFloorplateSqm={developerFloorplateSqm}
           tenantUnits={section1.existingUnits}
@@ -116,11 +133,16 @@ export default function Report() {
           commercialServiceArea={section2.commercialServiceArea}
         />
       )
-      case 4: return <Section4MarketSurvey data={section4} onChange={setSection4} />
+      case 4: return (
+        <Section4MarketSurvey
+          data={section4}
+          onChange={data => dispatch(updateSection4({ id: id!, data }))}
+        />
+      )
       case 5: return (
         <Section5Levies
           data={section5}
-          onChange={setSection5}
+          onChange={data => dispatch(updateSection5({ id: id!, data }))}
           registeredArea={section1.registeredArea}
           existingGrossSqm={existingGrossSqm}
           existingUnits={section1.existingUnits}
@@ -134,7 +156,7 @@ export default function Report() {
       case 6: return (
         <Section6BettermentLevy
           data={section6}
-          onChange={setSection6}
+          onChange={data => dispatch(updateSection6({ id: id!, data }))}
           existingResidentialArea={existingResidentialSqm}
           existingUnits={section1.existingUnits}
           existingCommercialArea={existingCommercialSqm}
@@ -147,7 +169,7 @@ export default function Report() {
       case 7: return (
         <Section7InventoryValue
           data={section7}
-          onChange={setSection7}
+          onChange={data => dispatch(updateSection7({ id: id!, data }))}
           developerUnits={developerUnits}
           developerFloorplateSqm={developerFloorplateSqm}
           developerCommercialSqm={developerCommercialSqm}
@@ -172,7 +194,9 @@ export default function Report() {
   }
 
   return (
-    <Layout sidebar={<SectionNav current={currentSection} onChange={setCurrentSection} />}>
+    <Layout sidebar={(close) => (
+      <SectionNav current={currentSection} onChange={n => { setCurrentSection(n); close() }} />
+    )}>
       <div className="max-w-5xl mx-auto space-y-5">
         <div>
           <p className="text-xs text-slate-400 mb-0.5">דוח #{id}</p>

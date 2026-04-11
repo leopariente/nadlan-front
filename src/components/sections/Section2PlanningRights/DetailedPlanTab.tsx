@@ -77,14 +77,14 @@ export function DetailedPlanTab({
   return (
     <>
       <Card title="מגורים" bodyClassName="p-5 space-y-5">
-        <div className="grid grid-cols-2 gap-x-6 gap-y-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
           <Field label='שטח לבנייה עיקרי — מגורים (מ"ר)'>{numInput('residentialMainArea')}</Field>
           <Field label='שטח לבנייה שירות — מגורים (מ"ר)'>{numInput('residentialServiceArea')}</Field>
         </div>
 
         <ComputedRow label='סה"כ שטח ברוטו למגורים (עיקרי + שירות)' value={residentialGross} />
 
-        <div className="grid grid-cols-2 gap-x-6 gap-y-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
           <Field label='סה"כ יח"ד — לפי נוסחת צפיפות'>{numInput('densityUnits')}</Field>
           <Field label='שטח ממ"ד ליח"ד (מ"ר)'>{numInput('mamadSqm', '12')}</Field>
         </div>
@@ -115,7 +115,7 @@ export function DetailedPlanTab({
       </Card>
 
       <Card title="מסחר" bodyClassName="p-5 space-y-5">
-        <div className="grid grid-cols-2 gap-x-6 gap-y-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
           <Field label='שטח לבנייה עיקרי — מסחר (מ"ר)'>{numInput('commercialMainArea')}</Field>
           <Field label='שטח לבנייה שירות — מסחר (מ"ר)'>{numInput('commercialServiceArea')}</Field>
         </div>

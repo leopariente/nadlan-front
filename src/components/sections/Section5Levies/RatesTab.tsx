@@ -60,7 +60,7 @@ export function RatesTab({ data, onChange, readOnly }: Props) {
         </div>
       ) : (
         <Card title="תעריפים לפי עירייה">
-          <div className="grid grid-cols-2 gap-x-6 gap-y-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
             {RATE_FIELDS.map(({ key, label, unit, step }) => (
               <Field key={key} label={label} unit={unit}>
                 <input

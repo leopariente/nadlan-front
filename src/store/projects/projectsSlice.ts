@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
+import type { PayloadAction } from '@reduxjs/toolkit'
 import type { ProjectSummary } from '@/types'
 import { loadProjects } from './projectActions'
 import { MOCK_PROJECT } from '@/mocks/mockProject'
@@ -18,7 +19,11 @@ const initialState: ProjectsState = {
 const projectsSlice = createSlice({
   name: 'projects',
   initialState,
-  reducers: {},
+  reducers: {
+    addProject(state, action: PayloadAction<ProjectSummary>) {
+      state.projects.unshift(action.payload)
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(loadProjects.pending, (state) => {
@@ -34,4 +39,5 @@ const projectsSlice = createSlice({
   },
 })
 
+export const { addProject } = projectsSlice.actions
 export default projectsSlice.reducer
