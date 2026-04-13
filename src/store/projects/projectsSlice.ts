@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
-import type { PayloadAction } from '@reduxjs/toolkit'
 import type { ProjectSummary } from '@/types'
 import { loadProjects } from './projectActions'
+import { createReport, loadReport, saveReport } from '@/store/reportData/reportDataActions'
 import { MOCK_PROJECT } from '@/mocks/mockProject'
 
 type LoadStatus = 'idle' | 'loading' | 'loaded' | 'error'
@@ -19,11 +19,7 @@ const initialState: ProjectsState = {
 const projectsSlice = createSlice({
   name: 'projects',
   initialState,
-  reducers: {
-    addProject(state, action: PayloadAction<ProjectSummary>) {
-      state.projects.unshift(action.payload)
-    },
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(loadProjects.pending, (state) => {
@@ -36,8 +32,25 @@ const projectsSlice = createSlice({
       .addCase(loadProjects.rejected, (state) => {
         state.loadStatus = 'error'
       })
+      .addCase(createReport.fulfilled, (state, action) => {
+        state.projects.unshift(action.payload.project)
+      })
+      .addCase(loadReport.fulfilled, (state, action) => {
+        const incoming = action.payload.project
+        const idx = state.projects.findIndex(p => p.id === incoming.id)
+        if (idx !== -1) {
+          state.projects[idx] = incoming
+        } else {
+          state.projects.unshift(incoming)
+        }
+      })
+      .addCase(saveReport.fulfilled, (state, action) => {
+        const project = state.projects.find(p => p.id === action.payload.id)
+        if (project) {
+          project.updatedAt = action.payload.updatedAt
+        }
+      })
   },
 })
 
-export const { addProject } = projectsSlice.actions
 export default projectsSlice.reducer

@@ -8,10 +8,13 @@ import type { Section1Data, FloorRow } from '@/types'
 interface Props {
   data: Section1Data
   onChange: (data: Section1Data) => void
+  gush: string
+  helka: string
+  address: string
   readOnly?: boolean
 }
 
-export default function Section1ExistingState({ data, onChange, readOnly = false }: Props) {
+export default function Section1ExistingState({ data, onChange, gush, helka, address, readOnly = false }: Props) {
   function setField<K extends keyof Omit<Section1Data, 'floors'>>(key: K, value: Section1Data[K]) {
     onChange({ ...data, [key]: value })
   }
@@ -48,7 +51,7 @@ export default function Section1ExistingState({ data, onChange, readOnly = false
             <input
               type="text"
               className={inputClass}
-              value={data.gush}
+              value={gush}
               disabled
               readOnly
             />
@@ -58,7 +61,7 @@ export default function Section1ExistingState({ data, onChange, readOnly = false
             <input
               type="text"
               className={inputClass}
-              value={data.helka}
+              value={helka}
               disabled
               readOnly
             />
@@ -68,9 +71,9 @@ export default function Section1ExistingState({ data, onChange, readOnly = false
             <input
               type="text"
               className={inputClass}
-              value={data.address}
-              disabled={readOnly}
-              onChange={e => setField('address', e.target.value)}
+              value={address}
+              disabled
+              readOnly
             />
           </Field>
 

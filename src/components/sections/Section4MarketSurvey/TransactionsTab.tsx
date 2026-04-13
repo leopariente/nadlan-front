@@ -1,6 +1,9 @@
+import { useState } from 'react'
 import { cn } from '@/lib/utils'
 import type { Transaction } from '@/types'
 import { StatCard } from './StatCard'
+import ConfirmDialog from '@/components/shared/ConfirmDialog'
+import { TablePagination } from '@/components/shared/TablePagination'
 
 function avg(nums: number[]): number {
   return nums.length ? nums.reduce((s, n) => s + n, 0) / nums.length : 0
@@ -14,7 +17,7 @@ function emptyTransaction(): Transaction {
   return {
     id: crypto.randomUUID(),
     saleDate: '', address: '', gushHelka: '',
-    floor: 0, rooms: 0, netAreaSqm: 0, reportedPriceILS: 0, notes: '',
+    floor: 0, rooms: 0, netAreaSqm: 0, reportedPriceILS: 0,
   }
 }
 
@@ -23,6 +26,8 @@ interface Props {
   selectedPricePerSqm: number
   onTransactionsChange: (rows: Transaction[]) => void
   onSelectedPriceChange: (v: number) => void
+  onGenerate: () => void
+  generating: boolean
   readOnly: boolean
 }
 
@@ -31,25 +36,49 @@ export function TransactionsTab({
   selectedPricePerSqm,
   onTransactionsChange,
   onSelectedPriceChange,
+  onGenerate,
+  generating,
   readOnly,
 }: Props) {
+  const [confirmOpen, setConfirmOpen] = useState(false)
+  const [page, setPage] = useState(1)
+  const PAGE_SIZE = 20
+
   function updateRow(id: string, patch: Partial<Transaction>) {
     onTransactionsChange(transactions.map(t => (t.id === id ? { ...t, ...patch } : t)))
   }
 
-  function deleteRow(id: string) {
-    onTransactionsChange(transactions.filter(t => t.id !== id))
+  function handleGenerateClick() {
+    if (transactions.length === 0) {
+      onGenerate()
+    } else {
+      setConfirmOpen(true)
+    }
   }
 
   function addRow() {
     onTransactionsChange([...transactions, emptyTransaction()])
+    setPage(Math.ceil((transactions.length + 1) / PAGE_SIZE))
   }
+
+  function deleteRow(id: string) {
+    const next = transactions.filter(t => t.id !== id)
+    onTransactionsChange(next)
+    const maxPage = Math.max(1, Math.ceil(next.length / PAGE_SIZE))
+    if (page > maxPage) setPage(maxPage)
+  }
+
+  const totalPages  = Math.max(1, Math.ceil(transactions.length / PAGE_SIZE))
+  const safePage    = Math.min(page, totalPages)
+  const pageRows    = transactions.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE)
 
   const valid       = transactions.filter(t => t.netAreaSqm > 0 && t.reportedPriceILS > 0)
   const count       = transactions.length
   const avgArea     = avg(valid.map(t => t.netAreaSqm))
   const avgPrice    = avg(valid.map(t => t.reportedPriceILS))
-  const avgPriceSqm = avg(valid.map(t => pricePerSqm(t)))
+  const totalArea   = valid.reduce((s, t) => s + t.netAreaSqm, 0)
+  const totalPrice  = valid.reduce((s, t) => s + t.reportedPriceILS, 0)
+  const avgPriceSqm = totalArea > 0 ? totalPrice / totalArea : 0
 
   const numInput = (id: string, field: 'floor' | 'rooms' | 'netAreaSqm' | 'reportedPriceILS') => (
     <input
@@ -63,7 +92,7 @@ export function TransactionsTab({
     />
   )
 
-  const textInput = (id: string, field: 'saleDate' | 'address' | 'gushHelka' | 'notes', placeholder = '') => (
+  const textInput = (id: string, field: 'saleDate' | 'address' | 'gushHelka', placeholder = '') => (
     <input
       type="text"
       className="cell-input"
@@ -89,12 +118,11 @@ export function TransactionsTab({
                 <th className="px-3 py-2.5 text-right font-medium whitespace-nowrap w-20">שטח נטו (מ&quot;ר)</th>
                 <th className="px-3 py-2.5 text-right font-medium whitespace-nowrap w-28">מחיר מדווח (₪)</th>
                 <th className="px-3 py-2.5 text-right font-medium whitespace-nowrap w-24 bg-slate-600">מחיר למ&quot;ר</th>
-                <th className="px-3 py-2.5 text-right font-medium whitespace-nowrap">הערות</th>
                 {!readOnly && <th className="w-8" />}
               </tr>
             </thead>
             <tbody>
-              {transactions.map((t, i) => {
+              {pageRows.map((t, i) => {
                 const pps = pricePerSqm(t)
                 return (
                   <tr
@@ -114,7 +142,6 @@ export function TransactionsTab({
                     <td className="px-3 py-2 text-right font-medium text-slate-700 bg-slate-100/70 border-e border-slate-100 tabular-nums whitespace-nowrap">
                       {pps > 0 ? pps.toLocaleString('he-IL') : '—'}
                     </td>
-                    <td className="px-0 py-0 border-e border-slate-100">{textInput(t.id, 'notes')}</td>
                     {!readOnly && (
                       <td className="px-2 text-center">
                         <button
@@ -134,7 +161,7 @@ export function TransactionsTab({
               {transactions.length === 0 && (
                 <tr>
                   <td
-                    colSpan={readOnly ? 9 : 10}
+                    colSpan={readOnly ? 8 : 9}
                     className="px-4 py-8 text-center text-sm text-slate-400"
                   >
                     אין עסקאות — לחץ &quot;הוסף עסקה&quot; להוספה
@@ -146,7 +173,7 @@ export function TransactionsTab({
         </div>
 
         {!readOnly && (
-          <div className="px-4 py-2.5 border-t border-slate-200 bg-white">
+          <div className="px-4 py-2.5 border-t border-slate-200 bg-white flex items-center justify-between">
             <button
               type="button"
               onClick={addRow}
@@ -154,8 +181,33 @@ export function TransactionsTab({
             >
               <span className="text-base leading-none">+</span> הוסף עסקה
             </button>
+            <button
+              type="button"
+              onClick={handleGenerateClick}
+              disabled={generating}
+              className="text-sm text-emerald-700 hover:text-emerald-900 font-medium flex items-center gap-1.5 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {generating ? (
+                <>
+                  <span className="inline-block w-3.5 h-3.5 border-2 border-emerald-600 border-t-transparent rounded-full animate-spin" />
+                  מייצר סקר שוק...
+                </>
+              ) : (
+                <>
+                  <span className="text-base leading-none">✦</span> ייצר סקר שוק
+                </>
+              )}
+            </button>
           </div>
         )}
+
+        <TablePagination
+          page={safePage}
+          totalPages={totalPages}
+          totalItems={count}
+          pageSize={PAGE_SIZE}
+          onChange={setPage}
+        />
       </div>
 
       <div className="flex gap-3 flex-wrap">
@@ -200,6 +252,14 @@ export function TransactionsTab({
           <span className="text-sm text-blue-700">₪ / מ"ר</span>
         </div>
       </div>
+
+      <ConfirmDialog
+        open={confirmOpen}
+        onOpenChange={setConfirmOpen}
+        title="איפוס סקר שוק"
+        description="קיימות עסקאות — יצירת סקר שוק חדש תמחק את כל הנתונים הקיימים. האם להמשיך?"
+        onConfirm={onGenerate}
+      />
     </div>
   )
 }

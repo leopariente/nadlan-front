@@ -7,7 +7,6 @@ export interface Transaction {
   rooms: number              // חדרים
   netAreaSqm: number         // שטח נטו (מ"ר)
   reportedPriceILS: number   // מחיר מדווח (₪)
-  notes: string              // הערות
   // computed: pricePerSqm = Math.round(reportedPriceILS / netAreaSqm)
 }
 

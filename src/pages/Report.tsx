@@ -1,16 +1,9 @@
 import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import {
-  initReport,
-  updateSection1,
-  updateSection2,
-  updateSection3,
-  updateSection4,
-  updateSection5,
-  updateSection6,
-  updateSection7,
-} from '@/store/reportData/reportDataSlice'
+import { loadReport, saveReport } from '@/store/reportData/reportDataActions'
+import type { ReportSections, SaveStatus } from '@/types'
+import { Button } from '@/components/ui/button'
 import { Layout } from '@/components/layout/Layout'
 import SectionNav from '@/components/layout/SectionNav'
 import Section1ExistingState from '@/components/sections/Section1ExistingState'
@@ -22,6 +15,7 @@ import Section6BettermentLevy from '@/components/sections/Section6BettermentLevy
 import Section7InventoryValue from '@/components/sections/Section7InventoryValue'
 import Section9Summary from '@/components/sections/Section9Summary'
 import { SECTIONS, type SectionNumber } from '@/constants/sections'
+import BackButton from '@/components/shared/BackButton'
 
 // ─── Placeholder for unimplemented sections ───────────────────────────────────
 
@@ -33,21 +27,81 @@ function ComingSoon({ label }: { label: string }) {
   )
 }
 
+// ─── Save button label/style maps ─────────────────────────────────────────────
+
+const saveLabels: Record<SaveStatus, string> = {
+  idle: 'שמור דוח',
+  saving: 'שומר...',
+  saved: 'נשמר ✓',
+  error: 'שגיאה — נסה שוב',
+}
+
+const saveExtraClass: Record<SaveStatus, string> = {
+  idle: '',
+  saving: '',
+  saved: 'text-green-600 border-green-300',
+  error: 'text-red-500 border-red-300',
+}
+
 // ─── Main page ────────────────────────────────────────────────────────────────
 
 export default function Report() {
   const { id } = useParams<{ id: string }>()
   const dispatch = useAppDispatch()
   const [currentSection, setCurrentSection] = useState<SectionNumber>(1)
+  const [sections, setSections] = useState<ReportSections | null>(null)
 
-  // Ensure report data is initialized for this ID
+  const currentReportId = useAppSelector(s => s.reportData?.currentReportId)
+  const loadStatus = useAppSelector(s => s.reportData?.loadStatus ?? 'idle')
+  const saveStatus = useAppSelector(s => s.reportData?.saveStatus ?? 'idle') as SaveStatus
+  const cachedSections = useAppSelector(s => s.reportData?.sections)
+  const cachedSection4 = useAppSelector(s => s.reportData?.sections?.section4 ?? null)
+  const project = useAppSelector(s => s.reportData?.project ?? null)
+
+  // Reset local sections when navigating to a different report
   useEffect(() => {
-    if (id) dispatch(initReport({ id }))
-  }, [id, dispatch])
+    setSections(null)
+  }, [id])
 
-  const sections = useAppSelector(s => s.reportData.reports[id ?? ''])
+  // Fetch from backend — skip if already loading or already have this report
+  useEffect(() => {
+    if (!id) return
+    if (loadStatus === 'loading') return
+    if (currentReportId === id && loadStatus !== 'error') return
+    dispatch(loadReport(id))
+  }, [id, currentReportId, loadStatus, dispatch])
+
+  // Seed local state on initial load (when sections is null)
+  useEffect(() => {
+    if (cachedSections && currentReportId === id && sections === null) {
+      setSections(cachedSections)
+    }
+  }, [cachedSections, currentReportId, id, sections])
+
+  // Sync section4 from store when deals are fetched
+  useEffect(() => {
+    if (cachedSection4) {
+      setSections(prev => prev ? { ...prev, section4: cachedSection4 } : prev)
+    }
+  }, [cachedSection4])
 
   const sectionLabel = SECTIONS.find(s => s.number === currentSection)?.label ?? ''
+
+  if (loadStatus === 'loading' || (loadStatus === 'idle' && !sections)) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-slate-400 text-sm">
+        טוען...
+      </div>
+    )
+  }
+
+  if (loadStatus === 'error') {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-red-500 text-sm">
+        שגיאה בטעינת הדוח
+      </div>
+    )
+  }
 
   if (!sections) {
     return (
@@ -107,13 +161,16 @@ export default function Report() {
       case 1: return (
         <Section1ExistingState
           data={section1}
-          onChange={data => dispatch(updateSection1({ id: id!, data }))}
+          onChange={data => setSections(prev => ({ ...prev!, section1: data }))}
+          gush={project?.gush ?? ''}
+          helka={project?.helka ?? ''}
+          address={project?.address ?? ''}
         />
       )
       case 2: return (
         <Section2PlanningRights
           data={section2}
-          onChange={data => dispatch(updateSection2({ id: id!, data }))}
+          onChange={data => setSections(prev => ({ ...prev!, section2: data }))}
           registeredArea={section1.registeredArea}
           existingResidentialSqm={existingResidentialSqm}
           existingUnits={section1.existingUnits}
@@ -123,7 +180,7 @@ export default function Report() {
       case 3: return (
         <Section3Program
           data={section3}
-          onChange={data => dispatch(updateSection3({ id: id!, data }))}
+          onChange={data => setSections(prev => ({ ...prev!, section3: data }))}
           developerUnits={developerUnits}
           developerFloorplateSqm={developerFloorplateSqm}
           tenantUnits={section1.existingUnits}
@@ -136,13 +193,15 @@ export default function Report() {
       case 4: return (
         <Section4MarketSurvey
           data={section4}
-          onChange={data => dispatch(updateSection4({ id: id!, data }))}
+          onChange={data => setSections(prev => ({ ...prev!, section4: data }))}
+          gush={project?.gush ?? ''}
+          helka={project?.helka ?? ''}
         />
       )
       case 5: return (
         <Section5Levies
           data={section5}
-          onChange={data => dispatch(updateSection5({ id: id!, data }))}
+          onChange={data => setSections(prev => ({ ...prev!, section5: data }))}
           registeredArea={section1.registeredArea}
           existingGrossSqm={existingGrossSqm}
           existingUnits={section1.existingUnits}
@@ -156,7 +215,7 @@ export default function Report() {
       case 6: return (
         <Section6BettermentLevy
           data={section6}
-          onChange={data => dispatch(updateSection6({ id: id!, data }))}
+          onChange={data => setSections(prev => ({ ...prev!, section6: data }))}
           existingResidentialArea={existingResidentialSqm}
           existingUnits={section1.existingUnits}
           existingCommercialArea={existingCommercialSqm}
@@ -169,7 +228,7 @@ export default function Report() {
       case 7: return (
         <Section7InventoryValue
           data={section7}
-          onChange={data => dispatch(updateSection7({ id: id!, data }))}
+          onChange={data => setSections(prev => ({ ...prev!, section7: data }))}
           developerUnits={developerUnits}
           developerFloorplateSqm={developerFloorplateSqm}
           developerCommercialSqm={developerCommercialSqm}
@@ -193,14 +252,32 @@ export default function Report() {
     }
   }
 
+  const isDemo = id === 'demo-1'
+
   return (
     <Layout sidebar={(close) => (
       <SectionNav current={currentSection} onChange={n => { setCurrentSection(n); close() }} />
     )}>
       <div className="max-w-5xl mx-auto space-y-5">
-        <div>
-          <p className="text-xs text-slate-400 mb-0.5">דוח #{id}</p>
-          <h1 className="text-xl font-bold text-slate-800">{sectionLabel}</h1>
+        <div className="flex items-start justify-between">
+          <div className="flex items-start gap-3">
+            <BackButton />
+            <div>
+              <p className="text-xs text-slate-400 mb-0.5">דוח #{id}</p>
+              <h1 className="text-xl font-bold text-slate-800">{sectionLabel}</h1>
+            </div>
+          </div>
+          {!isDemo && (
+            <Button
+              variant="outline"
+              size="sm"
+              className={saveExtraClass[saveStatus]}
+              disabled={saveStatus === 'saving'}
+              onClick={() => dispatch(saveReport({ id: id!, sections }))}
+            >
+              {saveLabels[saveStatus]}
+            </Button>
+          )}
         </div>
 
         {renderSection()}

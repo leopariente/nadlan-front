@@ -55,6 +55,9 @@ src/
       TabSwitcher.tsx               # <TabSwitcher tabs={[{key,label}]} activeTab onChange>
       CurrencyInput.tsx             # controlled currency input (formats on blur)
       ReportTable.tsx               # generic configurable table
+      BackButton.tsx                # <BackButton to="/" label="…"> — navigates back (RTL arrow)
+      ConfirmDialog.tsx             # <ConfirmDialog open onOpenChange title description onConfirm> — controlled Hebrew confirm modal
+      TablePagination.tsx           # <TablePagination page totalPages totalItems pageSize onChange> — paginator row, renders null when totalPages ≤ 1
     sections/
       Section1ExistingState/
         types.ts                    # FloorUse, FloorRow, Section1Data
@@ -76,7 +79,7 @@ src/
         RatesTab.tsx                # flat rate toggle + detailed rate inputs
         CalcTab.tsx                 # base data table + levy calculation table
     ui/
-      button.tsx / collapsible.tsx / separator.tsx   # shadcn primitives
+      button.tsx / collapsible.tsx / separator.tsx / dialog.tsx   # shadcn primitives
   lib/
     utils.ts                        # cn(), formatCurrency(), formatNumber(), parseCurrencyInput()
   hooks/

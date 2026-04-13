@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { loadProjects } from '@/store/projects/projectActions'
-import { addProject } from '@/store/projects/projectsSlice'
-import { initReport } from '@/store/reportData/reportDataSlice'
+import { createReport } from '@/store/reportData/reportDataActions'
+import type { CreateReportPayload } from '@/store/reportData/reportDataApi'
 import { inputClass } from '@/components/shared/formStyles'
 
 export default function Dashboard() {
@@ -17,27 +17,39 @@ export default function Dashboard() {
   const [address, setAddress] = useState('')
   const [gush, setGush] = useState('')
   const [helka, setHelka] = useState('')
+  const [isCreating, setIsCreating] = useState(false)
+  const [createError, setCreateError] = useState<string | null>(null)
 
   useEffect(() => {
     dispatch(loadProjects())
   }, [dispatch])
 
-  const handleCreate = () => {
+  const handleCreate = async () => {
     const name = projectName.trim()
-    if (!name) return
+    if (!name || isCreating) return
 
-    const id = crypto.randomUUID()
-    const now = new Date().toISOString()
+    const payload: CreateReportPayload = {
+      projectName: name,
+      address: address.trim(),
+      gush: gush.trim(),
+      helka: helka.trim(),
+    }
 
-    dispatch(addProject({ id, projectName: name, address: address.trim(), createdAt: now, updatedAt: now }))
-    dispatch(initReport({ id, gush: gush.trim(), helka: helka.trim() }))
-
-    setShowForm(false)
-    setProjectName('')
-    setAddress('')
-    setGush('')
-    setHelka('')
-    navigate(`/report/${id}`)
+    setIsCreating(true)
+    setCreateError(null)
+    try {
+      const result = await dispatch(createReport(payload)).unwrap()
+      setShowForm(false)
+      setProjectName('')
+      setAddress('')
+      setGush('')
+      setHelka('')
+      navigate(`/report/${result.project.id}`)
+    } catch {
+      setCreateError('שגיאה ביצירת הפרויקט — נסה שוב')
+    } finally {
+      setIsCreating(false)
+    }
   }
 
   return (
@@ -50,7 +62,7 @@ export default function Dashboard() {
 
         <div className="mb-6 flex items-center justify-between">
           <h2 className="text-lg font-semibold text-slate-700">הפרויקטים שלי</h2>
-          <Button variant="default" size="sm" onClick={() => setShowForm(v => !v)}>
+          <Button variant="default" size="sm" onClick={() => { setShowForm(v => !v); setCreateError(null) }}>
             + פרויקט חדש
           </Button>
         </div>
@@ -105,12 +117,25 @@ export default function Dashboard() {
                 />
               </div>
             </div>
+            {createError && (
+              <p className="text-xs text-red-500 text-right">{createError}</p>
+            )}
             <div className="flex gap-2 justify-end">
-              <Button variant="outline" size="sm" onClick={() => { setShowForm(false); setProjectName(''); setAddress(''); setGush(''); setHelka('') }}>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => { setShowForm(false); setProjectName(''); setAddress(''); setGush(''); setHelka(''); setCreateError(null) }}
+                disabled={isCreating}
+              >
                 ביטול
               </Button>
-              <Button variant="default" size="sm" onClick={handleCreate} disabled={!projectName.trim()}>
-                צור פרויקט
+              <Button
+                variant="default"
+                size="sm"
+                onClick={handleCreate}
+                disabled={!projectName.trim() || isCreating}
+              >
+                {isCreating ? 'יוצר...' : 'צור פרויקט'}
               </Button>
             </div>
           </div>
@@ -128,7 +153,14 @@ export default function Dashboard() {
                     {project.projectName}
                   </h3>
                   <p className="text-sm text-slate-500 mt-0.5">{project.address}</p>
-                  <p className="text-xs text-slate-400 mt-2">
+                  {(project.gush || project.helka) && (
+                    <p className="text-xs text-slate-400 mt-1">
+                      {project.gush && <span>גוש {project.gush}</span>}
+                      {project.gush && project.helka && <span className="mx-1">·</span>}
+                      {project.helka && <span>חלקה {project.helka}</span>}
+                    </p>
+                  )}
+                  <p className="text-xs text-slate-400 mt-1">
                     עודכן לאחרונה: {new Date(project.updatedAt).toLocaleDateString('he-IL')}
                   </p>
                 </div>

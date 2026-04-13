@@ -12,9 +12,6 @@ const EMPTY_UNDERGROUND_ROW = { parkingPerUnit: 0, parkingAboveGround: 0, parkin
 const EMPTY_UNDERGROUND_SPECIAL = { additionalSqm: 0, parkingSpots: 0, avgParkingSqm: 45 }
 
 export const INITIAL_SECTION1: Section1Data = {
-  gush: '',
-  helka: '',
-  address: '',
   registeredArea: 0,
   ownershipShare: '',
   existingUnits: 0,

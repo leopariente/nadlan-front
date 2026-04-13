@@ -8,9 +8,6 @@ export interface FloorRow {
 }
 
 export interface Section1Data {
-  gush: string
-  helka: string
-  address: string
   registeredArea: number
   ownershipShare: string
   existingUnits: number

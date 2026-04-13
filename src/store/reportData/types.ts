@@ -6,6 +6,7 @@ import type {
   Section5Data,
   Section6Data,
   Section7Data,
+  ProjectSummary,
 } from '@/types'
 
 export interface ReportSections {
@@ -18,6 +19,15 @@ export interface ReportSections {
   section7: Section7Data
 }
 
+export type LoadStatus = 'idle' | 'loading' | 'loaded' | 'error'
+export type SaveStatus = 'idle' | 'saving' | 'saved' | 'error'
+export type FetchDealsStatus = 'idle' | 'loading' | 'error'
+
 export interface ReportDataState {
-  reports: Record<string, ReportSections>
+  currentReportId: string | null
+  project: ProjectSummary | null
+  sections: ReportSections | null
+  loadStatus: LoadStatus
+  saveStatus: SaveStatus
+  fetchDealsStatus: FetchDealsStatus
 }

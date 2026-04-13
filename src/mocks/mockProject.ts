@@ -15,14 +15,13 @@ export const MOCK_PROJECT: ProjectSummary = {
   id: MOCK_ID,
   projectName: 'הרצל 12 — פינוי-בינוי',
   address: 'הרצל 12, תל אביב-יפו',
+  gush: '6660',
+  helka: '50',
   createdAt: '2025-11-01T08:00:00.000Z',
   updatedAt: '2026-03-20T14:30:00.000Z',
 }
 
 export const MOCK_SECTION1: Section1Data = {
-  gush: '6660',
-  helka: '50',
-  address: 'הרצל 12, תל אביב-יפו',
   registeredArea: 1200,
   ownershipShare: 'בשלמות',
   existingUnits: 24,
@@ -90,19 +89,19 @@ export const MOCK_SECTION4: Section4Data = {
   newApartments: {
     selectedPricePerSqm: 28000,
     transactions: [
-      { id: '1', saleDate: '15/09/2025', address: 'הרצל 8',     gushHelka: '6660/48', floor: 3, rooms: 4, netAreaSqm: 95,  reportedPriceILS: 2_660_000, notes: '' },
-      { id: '2', saleDate: '22/09/2025', address: 'הרצל 18',    gushHelka: '6660/55', floor: 5, rooms: 4, netAreaSqm: 98,  reportedPriceILS: 2_800_000, notes: '' },
-      { id: '3', saleDate: '01/10/2025', address: 'אלנבי 40',   gushHelka: '6661/12', floor: 6, rooms: 5, netAreaSqm: 115, reportedPriceILS: 3_300_000, notes: '' },
-      { id: '4', saleDate: '14/10/2025', address: 'הרצל 22',    gushHelka: '6660/61', floor: 2, rooms: 3, netAreaSqm: 78,  reportedPriceILS: 2_100_000, notes: '' },
-      { id: '5', saleDate: '29/10/2025', address: 'לילינבלום 5', gushHelka: '6660/70', floor: 8, rooms: 5, netAreaSqm: 120, reportedPriceILS: 3_480_000, notes: 'גג' },
+      { id: '1', saleDate: '15/09/2025', address: 'הרצל 8',     gushHelka: '6660/48', floor: 3, rooms: 4, netAreaSqm: 95,  reportedPriceILS: 2_660_000 },
+      { id: '2', saleDate: '22/09/2025', address: 'הרצל 18',    gushHelka: '6660/55', floor: 5, rooms: 4, netAreaSqm: 98,  reportedPriceILS: 2_800_000 },
+      { id: '3', saleDate: '01/10/2025', address: 'אלנבי 40',   gushHelka: '6661/12', floor: 6, rooms: 5, netAreaSqm: 115, reportedPriceILS: 3_300_000 },
+      { id: '4', saleDate: '14/10/2025', address: 'הרצל 22',    gushHelka: '6660/61', floor: 2, rooms: 3, netAreaSqm: 78,  reportedPriceILS: 2_100_000 },
+      { id: '5', saleDate: '29/10/2025', address: 'לילינבלום 5', gushHelka: '6660/70', floor: 8, rooms: 5, netAreaSqm: 120, reportedPriceILS: 3_480_000 },
     ],
   },
   secondaryApartments: {
     selectedPricePerSqm: 24000,
     transactions: [
-      { id: '6', saleDate: '05/08/2025', address: 'הרצל 14',   gushHelka: '6660/51', floor: 2, rooms: 3, netAreaSqm: 72,  reportedPriceILS: 1_728_000, notes: '' },
-      { id: '7', saleDate: '18/08/2025', address: 'הרצל 20',   gushHelka: '6660/58', floor: 4, rooms: 4, netAreaSqm: 88,  reportedPriceILS: 2_112_000, notes: '' },
-      { id: '8', saleDate: '02/09/2025', address: 'אלנבי 35',  gushHelka: '6661/09', floor: 1, rooms: 3, netAreaSqm: 70,  reportedPriceILS: 1_645_000, notes: '' },
+      { id: '6', saleDate: '05/08/2025', address: 'הרצל 14',   gushHelka: '6660/51', floor: 2, rooms: 3, netAreaSqm: 72,  reportedPriceILS: 1_728_000 },
+      { id: '7', saleDate: '18/08/2025', address: 'הרצל 20',   gushHelka: '6660/58', floor: 4, rooms: 4, netAreaSqm: 88,  reportedPriceILS: 2_112_000 },
+      { id: '8', saleDate: '02/09/2025', address: 'אלנבי 35',  gushHelka: '6661/09', floor: 1, rooms: 3, netAreaSqm: 70,  reportedPriceILS: 1_645_000 },
     ],
   },
   commercial: { commercialPctOfResidential: 85 },

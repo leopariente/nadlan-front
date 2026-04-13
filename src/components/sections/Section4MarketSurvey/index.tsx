@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { TabSwitcher } from '@/components/shared/TabSwitcher'
 import { TransactionsTab } from './TransactionsTab'
 import { CommercialTab } from './CommercialTab'
+import { useAppDispatch, useAppSelector } from '@/hooks/redux'
+import { fetchDeals } from '@/store/reportData/reportDataActions'
 import type { Section4Data } from '@/types'
 
 type TabKey = 'new' | 'secondary' | 'commercial'
@@ -15,11 +17,19 @@ const TABS = [
 interface Props {
   data: Section4Data
   onChange: (data: Section4Data) => void
+  gush: string
+  helka: string
   readOnly?: boolean
 }
 
-export default function Section4MarketSurvey({ data, onChange, readOnly = false }: Props) {
+export default function Section4MarketSurvey({ data, onChange, gush, helka, readOnly = false }: Props) {
   const [activeTab, setActiveTab] = useState<TabKey>('new')
+  const dispatch = useAppDispatch()
+  const generating = useAppSelector(s => s.reportData?.fetchDealsStatus === 'loading')
+
+  function handleGenerate(tab: 'new' | 'secondary') {
+    dispatch(fetchDeals({ gush, helka, tab }))
+  }
 
   return (
     <div className="space-y-5">
@@ -39,6 +49,8 @@ export default function Section4MarketSurvey({ data, onChange, readOnly = false 
           onSelectedPriceChange={v =>
             onChange({ ...data, newApartments: { ...data.newApartments, selectedPricePerSqm: v } })
           }
+          onGenerate={() => handleGenerate('new')}
+          generating={generating}
           readOnly={readOnly}
         />
       )}
@@ -53,6 +65,8 @@ export default function Section4MarketSurvey({ data, onChange, readOnly = false 
           onSelectedPriceChange={v =>
             onChange({ ...data, secondaryApartments: { ...data.secondaryApartments, selectedPricePerSqm: v } })
           }
+          onGenerate={() => handleGenerate('secondary')}
+          generating={generating}
           readOnly={readOnly}
         />
       )}
