@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { ProjectSummary } from '@/types'
-import { loadProjects } from './projectActions'
+import { loadProjects, deleteProjects } from './projectActions'
 import { createReport, loadReport, saveReport } from '@/store/reportData/reportDataActions'
 import { MOCK_PROJECT } from '@/mocks/mockProject'
 
@@ -49,6 +49,10 @@ const projectsSlice = createSlice({
         if (project) {
           project.updatedAt = action.payload.updatedAt
         }
+      })
+      .addCase(deleteProjects.fulfilled, (state, action) => {
+        const removed = new Set(action.payload)
+        state.projects = state.projects.filter(p => !removed.has(p.id))
       })
   },
 })

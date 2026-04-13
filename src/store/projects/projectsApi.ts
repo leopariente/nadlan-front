@@ -6,4 +6,8 @@ export class projectsApi {
   fetchProjects(): Promise<ProjectSummary[]> {
     return api.get<ProjectSummary[]>('/api/reports').then(r => r.data)
   }
+
+  deleteProject(id: string): Promise<void> {
+    return api.delete(`/api/reports/${id}`).then(() => undefined)
+  }
 }
