@@ -25,7 +25,7 @@ function mapDeal(r: DealApiRecord): Transaction {
   }
 }
 
-const api = axios.create({ baseURL: 'http://localhost:8000' })
+const api = axios.create({ baseURL: import.meta.env.VITE_API_URL })
 
 export interface CreateReportPayload {
   projectName: string
