@@ -1,6 +1,6 @@
-import axios from 'axios'
 import type { ProjectSummary, Transaction } from '@/types'
 import type { ReportSections } from './types'
+import { api } from '@/store/projects/projectsApi'
 
 interface DealApiRecord {
   sale_date: string
@@ -24,8 +24,6 @@ function mapDeal(r: DealApiRecord): Transaction {
     reportedPriceILS: r.reported_price ?? 0,
   }
 }
-
-const api = axios.create({ baseURL: import.meta.env.VITE_API_URL })
 
 export interface CreateReportPayload {
   projectName: string

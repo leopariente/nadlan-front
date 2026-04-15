@@ -7,6 +7,7 @@ import { createReport } from '@/store/reportData/reportDataActions'
 import type { CreateReportPayload } from '@/store/reportData/reportDataApi'
 import { inputClass } from '@/components/shared/formStyles'
 import ConfirmDialog from '@/components/shared/ConfirmDialog'
+import TopBar from '@/components/layout/TopBar'
 
 export default function Dashboard() {
   const navigate = useNavigate()
@@ -87,7 +88,9 @@ export default function Dashboard() {
   const selectionCount = selectedIds.size
 
   return (
-    <div className="min-h-screen bg-slate-50 p-4 sm:p-8">
+    <div className="min-h-screen bg-slate-50">
+      <TopBar />
+      <div className="pt-14 px-4 sm:px-8 pb-4 sm:pb-8">
       <div className="max-w-4xl mx-auto">
         <div className="mb-8">
           <h1 className="text-2xl font-bold text-slate-800">דוח אפס</h1>
@@ -259,6 +262,7 @@ export default function Dashboard() {
         description={`האם למחוק ${selectionCount} פרויקט${selectionCount > 1 ? 'ים' : ''}? פעולה זו אינה הפיכה.`}
         onConfirm={handleDelete}
       />
+      </div>
     </div>
   )
 }
