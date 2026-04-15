@@ -11,6 +11,7 @@ import {
   MOCK_SECTION5,
   MOCK_SECTION6,
   MOCK_SECTION7,
+  MOCK_SECTION8,
 } from '@/mocks/mockProject'
 
 const initialState: ReportDataState = {
@@ -24,6 +25,7 @@ const initialState: ReportDataState = {
     section5: MOCK_SECTION5,
     section6: MOCK_SECTION6,
     section7: MOCK_SECTION7,
+    section8: MOCK_SECTION8,
   },
   loadStatus: 'loaded',
   saveStatus: 'idle',

@@ -75,9 +75,13 @@ src/
         CommercialTab.tsx           # commercial % of residential
       Section5Levies/
         types.ts                    # Section5Data
-        index.tsx                   # tab switch: rates | calc
+        index.tsx                   # tab switch: rates | calc; exports computeTotalLeviesAndFees()
         RatesTab.tsx                # flat rate toggle + detailed rate inputs
         CalcTab.tsx                 # base data table + levy calculation table
+      Section8EconomicAnalysis/
+        types.ts                    # Section8Data, DEFAULT_SECTION8
+        index.tsx                   # 5-tab cost analysis; exports computeSection8()
+        CostTable.tsx               # shared sub-component: renders a single cost table (CostRowDef[])
     ui/
       button.tsx / collapsible.tsx / separator.tsx / dialog.tsx   # shadcn primitives
   lib/
@@ -86,10 +90,14 @@ src/
     redux.ts                        # useAppSelector, useAppDispatch
 ```
 
-## Implemented vs Pending
+## Cross-Section Helpers
 
-**Implemented (sections 1, 2, 4, 5):** Full UI, local state, cross-section derived values.  
-**Pending (sections 3, 6, 7, 8, 9):** Render `<ComingSoon>` placeholder in Report.tsx.  
+Exported pure functions used in `Report.tsx` to derive cross-section props:
+
+- `Section5Levies` → `computeTotalLeviesAndFees(data, ...)` — Section 8 prop
+- `Section6BettermentLevy` → `computeEstimatedBettermentLevy(data, ...)` — Section 8 prop
+- `Section8EconomicAnalysis` → `computeSection8(data, props)` → `{ directConstructionCosts, totalConstructionCosts }` — Section 9 prop
+
 **Redux / backend integration:** Only projects list (Dashboard). Report editor uses `useState` — no load/save yet.
 
 ## Type System

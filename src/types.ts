@@ -5,5 +5,6 @@ export type { Transaction, Section4Data } from './components/sections/Section4Ma
 export type { Section5Data } from './components/sections/Section5Levies/types'
 export type { Section6Data } from './components/sections/Section6BettermentLevy/types'
 export type { Section7Data } from './components/sections/Section7InventoryValue/types'
+export type { Section8Data } from './components/sections/Section8EconomicAnalysis/types'
 export type { ProjectSummary } from './store/projects/types'
 export type { ReportSections, LoadStatus, SaveStatus, FetchDealsStatus } from './store/reportData/types'

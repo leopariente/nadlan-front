@@ -3,7 +3,7 @@ export interface Transaction {
   saleDate: string           // תאריך מכירה
   address: string            // כתובת
   gushHelka: string          // גו"ח / פרויקט
-  floor: number              // קומה
+  floor: string | null       // קומה (שם עברי מרשם המקרקעין)
   rooms: number              // חדרים
   netAreaSqm: number         // שטח נטו (מ"ר)
   reportedPriceILS: number   // מחיר מדווח (₪)

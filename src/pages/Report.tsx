@@ -9,12 +9,14 @@ import SectionNav from '@/components/layout/SectionNav'
 import Section1ExistingState from '@/components/sections/Section1ExistingState'
 import Section2PlanningRights from '@/components/sections/Section2PlanningRights'
 import Section4MarketSurvey from '@/components/sections/Section4MarketSurvey'
-import Section5Levies from '@/components/sections/Section5Levies'
+import Section5Levies, { computeTotalLeviesAndFees } from '@/components/sections/Section5Levies'
 import Section3Program from '@/components/sections/Section3Program'
-import Section6BettermentLevy from '@/components/sections/Section6BettermentLevy'
+import Section6BettermentLevy, { computeEstimatedBettermentLevy } from '@/components/sections/Section6BettermentLevy'
 import Section7InventoryValue from '@/components/sections/Section7InventoryValue'
+import Section8EconomicAnalysis, { computeSection8 } from '@/components/sections/Section8EconomicAnalysis'
 import Section9Summary from '@/components/sections/Section9Summary'
 import { SECTIONS, type SectionNumber } from '@/constants/sections'
+import { deriveRow, undergroundSqm, specialUndergroundSqm } from '@/components/sections/Section3Program/types'
 import BackButton from '@/components/shared/BackButton'
 
 // ─── Placeholder for unimplemented sections ───────────────────────────────────
@@ -112,6 +114,7 @@ export default function Report() {
   }
 
   const { section1, section2, section3, section4, section5, section6, section7 } = sections
+  const section8 = sections.section8
 
   // Cross-section values derived from Section 1
   const existingResidentialSqm = section1.floors
@@ -155,6 +158,59 @@ export default function Report() {
   const s9ResRevenueK            = Math.round(developerFloorplateSqm * s4ResidentialPrice / 1000)
   const s9CommRevenueK           = Math.round(developerCommercialSqm * s4CommercialPrice  / 1000)
   const s9TotalDeveloperRevenue  = Math.round(s9ResRevenueK / s9VatFactor) + s9CommRevenueK
+
+  // Section 8 inputs — derived from sections 1, 2, 3, 5, 6, 7
+  const s3TenantDerived          = deriveRow(section3.tenantRow, section1.existingUnits)
+  const s3DeveloperDerived       = deriveRow(section3.developerRow, developerUnits)
+  const s8TotalGrossResidential  = s3TenantDerived.totalGross + s3DeveloperDerived.totalGross
+  const s8TotalGrossCommercial   = section2.commercialMainArea + section2.commercialServiceArea
+  const s8TotalOpenBalconies     = s3TenantDerived.totalOpenBalcony + s3DeveloperDerived.totalOpenBalcony
+  const s8TotalRoofBalconies     = section3.tenantRow.roofBalconySqm + section3.developerRow.roofBalconySqm
+  const s8TotalUnderground       =
+    undergroundSqm(section3.underground.tenantRow) +
+    undergroundSqm(section3.underground.developerRow) +
+    specialUndergroundSqm(section3.underground.commercial) +
+    specialUndergroundSqm(section3.underground.disabled) +
+    specialUndergroundSqm(section3.underground.publicBuildings)
+  const s8ExistingTotalBuiltArea = section1.floors.reduce((s, f) => s + f.floorArea + f.balconyArea, 0)
+  const s8TotalLeviesAndFees     = computeTotalLeviesAndFees(
+    section5,
+    section1.registeredArea,
+    existingGrossSqm,
+    s2ResidentialGross,
+    s2CommercialGross,
+    0,
+    balconyTotalSqm,
+  )
+  const s8EstimatedBettermentLevy = computeEstimatedBettermentLevy(
+    section6,
+    existingResidentialSqm,
+    existingCommercialSqm,
+    section2.residentialMainArea,
+    section2.commercialMainArea,
+    s4ResidentialPrice,
+  )
+  const s8VatFactor              = 1 + section7.vatPct / 100
+  const s8TotalRevenueIncVat     = developerFloorplateSqm * s4ResidentialPrice + developerCommercialSqm * s4CommercialPrice
+  const s8TotalRevenueExVat      = (developerFloorplateSqm * s4ResidentialPrice) / s8VatFactor + developerCommercialSqm * s4CommercialPrice
+  const s8DeveloperRevenueExVat  = s8TotalRevenueExVat
+
+  const s8Computed = computeSection8(section8, {
+    totalGrossResidentialArea: s8TotalGrossResidential,
+    totalGrossCommercialArea:  s8TotalGrossCommercial,
+    totalOpenBalconies:        s8TotalOpenBalconies,
+    totalRoofBalconies:        s8TotalRoofBalconies,
+    totalUndergroundArea:      s8TotalUnderground,
+    existingUnits:             section1.existingUnits,
+    existingCommercialArea:    existingCommercialSqm,
+    existingTotalBuiltArea:    s8ExistingTotalBuiltArea,
+    newTotalUnits:             section2.densityUnits,
+    totalLeviesAndFees:        s8TotalLeviesAndFees,
+    estimatedBettermentLevy:   s8EstimatedBettermentLevy,
+    totalRevenueIncVat:        s8TotalRevenueIncVat,
+    totalRevenueExVat:         s8TotalRevenueExVat,
+    developerRevenueExVat:     s8DeveloperRevenueExVat,
+  })
 
   function renderSection() {
     switch (currentSection) {
@@ -236,6 +292,27 @@ export default function Report() {
           commercialPricePerSqm={s4CommercialPrice}
         />
       )
+      case 8: return (
+        <Section8EconomicAnalysis
+          data={section8}
+          onChange={data => setSections(prev => ({ ...prev!, section8: data }))}
+          totalGrossResidentialArea={s8TotalGrossResidential}
+          totalGrossCommercialArea={s8TotalGrossCommercial}
+          totalOpenBalconies={s8TotalOpenBalconies}
+          totalRoofBalconies={s8TotalRoofBalconies}
+          totalUndergroundArea={s8TotalUnderground}
+          existingUnits={section1.existingUnits}
+          existingCommercialArea={existingCommercialSqm}
+          existingTotalBuiltArea={s8ExistingTotalBuiltArea}
+          newTotalUnits={section2.densityUnits}
+          developerUnitsForSale={developerUnits}
+          totalLeviesAndFees={s8TotalLeviesAndFees}
+          estimatedBettermentLevy={s8EstimatedBettermentLevy}
+          totalRevenueIncVat={s8TotalRevenueIncVat}
+          totalRevenueExVat={s8TotalRevenueExVat}
+          developerRevenueExVat={s8DeveloperRevenueExVat}
+        />
+      )
       case 9: return (
         <Section9Summary
           existingUnits={section1.existingUnits}
@@ -245,7 +322,7 @@ export default function Report() {
           developerUnitsForSale={developerUnits}
           developerFloorAreaForSale={developerFloorplateSqm}
           totalDeveloperRevenue={s9TotalDeveloperRevenue}
-          totalConstructionCosts={0}
+          totalConstructionCosts={s8Computed.totalConstructionCosts}
         />
       )
       default: return <ComingSoon label={sectionLabel} />

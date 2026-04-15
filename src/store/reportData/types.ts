@@ -6,6 +6,7 @@ import type {
   Section5Data,
   Section6Data,
   Section7Data,
+  Section8Data,
   ProjectSummary,
 } from '@/types'
 
@@ -17,6 +18,7 @@ export interface ReportSections {
   section5: Section5Data
   section6: Section6Data
   section7: Section7Data
+  section8: Section8Data
 }
 
 export type LoadStatus = 'idle' | 'loading' | 'loaded' | 'error'

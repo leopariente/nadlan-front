@@ -7,7 +7,9 @@ import type {
   Section5Data,
   Section6Data,
   Section7Data,
+  Section8Data,
 } from '@/types'
+import { DEFAULT_SECTION8 } from '@/components/sections/Section8EconomicAnalysis/types'
 
 export const MOCK_ID = 'demo-1'
 
@@ -89,19 +91,19 @@ export const MOCK_SECTION4: Section4Data = {
   newApartments: {
     selectedPricePerSqm: 28000,
     transactions: [
-      { id: '1', saleDate: '15/09/2025', address: 'הרצל 8',     gushHelka: '6660/48', floor: 3, rooms: 4, netAreaSqm: 95,  reportedPriceILS: 2_660_000 },
-      { id: '2', saleDate: '22/09/2025', address: 'הרצל 18',    gushHelka: '6660/55', floor: 5, rooms: 4, netAreaSqm: 98,  reportedPriceILS: 2_800_000 },
-      { id: '3', saleDate: '01/10/2025', address: 'אלנבי 40',   gushHelka: '6661/12', floor: 6, rooms: 5, netAreaSqm: 115, reportedPriceILS: 3_300_000 },
-      { id: '4', saleDate: '14/10/2025', address: 'הרצל 22',    gushHelka: '6660/61', floor: 2, rooms: 3, netAreaSqm: 78,  reportedPriceILS: 2_100_000 },
-      { id: '5', saleDate: '29/10/2025', address: 'לילינבלום 5', gushHelka: '6660/70', floor: 8, rooms: 5, netAreaSqm: 120, reportedPriceILS: 3_480_000 },
+      { id: '1', saleDate: '15/09/2025', address: 'הרצל 8',     gushHelka: '6660/48', floor: 'שלישי',   rooms: 4, netAreaSqm: 95,  reportedPriceILS: 2_660_000 },
+      { id: '2', saleDate: '22/09/2025', address: 'הרצל 18',    gushHelka: '6660/55', floor: 'חמישי',   rooms: 4, netAreaSqm: 98,  reportedPriceILS: 2_800_000 },
+      { id: '3', saleDate: '01/10/2025', address: 'אלנבי 40',   gushHelka: '6661/12', floor: 'שישי',    rooms: 5, netAreaSqm: 115, reportedPriceILS: 3_300_000 },
+      { id: '4', saleDate: '14/10/2025', address: 'הרצל 22',    gushHelka: '6660/61', floor: 'שני',     rooms: 3, netAreaSqm: 78,  reportedPriceILS: 2_100_000 },
+      { id: '5', saleDate: '29/10/2025', address: 'לילינבלום 5', gushHelka: '6660/70', floor: 'שמיני',  rooms: 5, netAreaSqm: 120, reportedPriceILS: 3_480_000 },
     ],
   },
   secondaryApartments: {
     selectedPricePerSqm: 24000,
     transactions: [
-      { id: '6', saleDate: '05/08/2025', address: 'הרצל 14',   gushHelka: '6660/51', floor: 2, rooms: 3, netAreaSqm: 72,  reportedPriceILS: 1_728_000 },
-      { id: '7', saleDate: '18/08/2025', address: 'הרצל 20',   gushHelka: '6660/58', floor: 4, rooms: 4, netAreaSqm: 88,  reportedPriceILS: 2_112_000 },
-      { id: '8', saleDate: '02/09/2025', address: 'אלנבי 35',  gushHelka: '6661/09', floor: 1, rooms: 3, netAreaSqm: 70,  reportedPriceILS: 1_645_000 },
+      { id: '6', saleDate: '05/08/2025', address: 'הרצל 14',   gushHelka: '6660/51', floor: 'שני',     rooms: 3, netAreaSqm: 72,  reportedPriceILS: 1_728_000 },
+      { id: '7', saleDate: '18/08/2025', address: 'הרצל 20',   gushHelka: '6660/58', floor: 'רביעי',   rooms: 4, netAreaSqm: 88,  reportedPriceILS: 2_112_000 },
+      { id: '8', saleDate: '02/09/2025', address: 'אלנבי 35',  gushHelka: '6661/09', floor: 'ראשון',   rooms: 3, netAreaSqm: 70,  reportedPriceILS: 1_645_000 },
     ],
   },
   commercial: { commercialPctOfResidential: 85 },
@@ -139,4 +141,8 @@ export const MOCK_SECTION6: Section6Data = {
 
 export const MOCK_SECTION7: Section7Data = {
   vatPct: 18,
+}
+
+export const MOCK_SECTION8: Section8Data = {
+  ...DEFAULT_SECTION8,
 }

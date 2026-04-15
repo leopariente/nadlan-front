@@ -18,7 +18,7 @@ function mapDeal(r: DealApiRecord): Transaction {
     saleDate: r.sale_date,
     address: r.address ?? '',
     gushHelka: r.gush_helka,
-    floor: r.floor != null ? parseFloat(r.floor) : 0,
+    floor: r.floor ?? null,
     rooms: r.rooms ?? 0,
     netAreaSqm: r.net_area ?? 0,
     reportedPriceILS: r.reported_price ?? 0,

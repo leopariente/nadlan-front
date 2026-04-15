@@ -17,7 +17,7 @@ function emptyTransaction(): Transaction {
   return {
     id: crypto.randomUUID(),
     saleDate: '', address: '', gushHelka: '',
-    floor: 0, rooms: 0, netAreaSqm: 0, reportedPriceILS: 0,
+    floor: null, rooms: 0, netAreaSqm: 0, reportedPriceILS: 0,
   }
 }
 
@@ -80,7 +80,7 @@ export function TransactionsTab({
   const totalPrice  = valid.reduce((s, t) => s + t.reportedPriceILS, 0)
   const avgPriceSqm = totalArea > 0 ? totalPrice / totalArea : 0
 
-  const numInput = (id: string, field: 'floor' | 'rooms' | 'netAreaSqm' | 'reportedPriceILS') => (
+  const numInput = (id: string, field: 'rooms' | 'netAreaSqm' | 'reportedPriceILS') => (
     <input
       type="number"
       min={0}
@@ -92,7 +92,7 @@ export function TransactionsTab({
     />
   )
 
-  const textInput = (id: string, field: 'saleDate' | 'address' | 'gushHelka', placeholder = '') => (
+  const textInput = (id: string, field: 'saleDate' | 'address' | 'gushHelka' | 'floor', placeholder = '') => (
     <input
       type="text"
       className="cell-input"
@@ -135,7 +135,7 @@ export function TransactionsTab({
                     <td className="px-0 py-0 border-e border-slate-100">{textInput(t.id, 'saleDate', 'DD/MM/YYYY')}</td>
                     <td className="px-0 py-0 border-e border-slate-100">{textInput(t.id, 'address')}</td>
                     <td className="px-0 py-0 border-e border-slate-100">{textInput(t.id, 'gushHelka')}</td>
-                    <td className="px-0 py-0 border-e border-slate-100">{numInput(t.id, 'floor')}</td>
+                    <td className="px-0 py-0 border-e border-slate-100">{textInput(t.id, 'floor')}</td>
                     <td className="px-0 py-0 border-e border-slate-100">{numInput(t.id, 'rooms')}</td>
                     <td className="px-0 py-0 border-e border-slate-100">{numInput(t.id, 'netAreaSqm')}</td>
                     <td className="px-0 py-0 border-e border-slate-100">{numInput(t.id, 'reportedPriceILS')}</td>

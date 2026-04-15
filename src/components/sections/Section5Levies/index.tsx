@@ -25,6 +25,41 @@ interface Props {
   readOnly?: boolean
 }
 
+// ─── Exported helper for cross-section use ────────────────────────────────────
+
+export function computeTotalLeviesAndFees(
+  data: Section5Data,
+  registeredArea: number,
+  existingGrossSqm: number,
+  residentialGross: number,
+  commercialGross: number,
+  basementSqm: number,
+  balconyTotalSqm: number,
+): number {
+  const FLAT_RATE_PER_SQM = 500
+  const EXISTING_CREDIT_FACTOR = 0.8
+
+  const allSurface = residentialGross + commercialGross + basementSqm + balconyTotalSqm
+  const existingCredit = existingGrossSqm * EXISTING_CREDIT_FACTOR
+  const netNew = allSurface - existingCredit
+  const aboveGround = residentialGross + commercialGross
+
+  if (data.useFlatRate) return aboveGround * FLAT_RATE_PER_SQM
+
+  const { rates } = data
+  const subtotal =
+    allSurface * rates.constructionPermit +
+    registeredArea * rates.roadLand +
+    netNew * rates.roadBuilding +
+    registeredArea * rates.sidewalkLand +
+    netNew * rates.sidewalkBuilding +
+    registeredArea * rates.drainageLand +
+    netNew * rates.drainageBuilding +
+    netNew * rates.waterAuthority
+
+  return subtotal * (1 + rates.safetyBuffer / 100)
+}
+
 export default function Section5Levies({
   data,
   onChange,
