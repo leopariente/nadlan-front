@@ -36,7 +36,7 @@ export interface CreateReportPayload {
 
 export interface ReportResponse {
   project: ProjectSummary
-  sections: ReportSections
+  sections: Omit<ReportSections, 'section8'> & { section8?: ReportSections['section8'] }
 }
 
 export class reportDataApi {

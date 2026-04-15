@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { loadReport, saveReport } from '@/store/reportData/reportDataActions'
@@ -18,6 +18,7 @@ import Section9Summary from '@/components/sections/Section9Summary'
 import { SECTIONS, type SectionNumber } from '@/constants/sections'
 import { deriveRow, undergroundSqm, specialUndergroundSqm } from '@/components/sections/Section3Program/types'
 import BackButton from '@/components/shared/BackButton'
+import ReportSkeleton from '@/components/shared/ReportSkeleton'
 
 // ─── Placeholder for unimplemented sections ───────────────────────────────────
 
@@ -89,28 +90,37 @@ export default function Report() {
 
   const sectionLabel = SECTIONS.find(s => s.number === currentSection)?.label ?? ''
 
-  if (loadStatus === 'loading' || (loadStatus === 'idle' && !sections)) {
-    return (
-      <div className="min-h-screen flex items-center justify-center text-slate-400 text-sm">
-        טוען...
+  const skeletonLayout = (content: React.ReactNode) => (
+    <Layout sidebar={(close) => (
+      <SectionNav current={currentSection} onChange={n => { setCurrentSection(n); close() }} />
+    )}>
+      <div className="max-w-5xl mx-auto space-y-5">
+        <div className="flex items-start gap-3">
+          <BackButton />
+          <div>
+            <div className="h-3 bg-slate-200 rounded w-20 mb-1 animate-pulse" />
+            <div className="h-6 bg-slate-200 rounded w-36 animate-pulse" />
+          </div>
+        </div>
+        {content}
       </div>
-    )
+    </Layout>
+  )
+
+  if (loadStatus === 'loading' || (loadStatus === 'idle' && !sections)) {
+    return skeletonLayout(<ReportSkeleton />)
   }
 
   if (loadStatus === 'error') {
-    return (
-      <div className="min-h-screen flex items-center justify-center text-red-500 text-sm">
+    return skeletonLayout(
+      <div className="flex items-center justify-center h-48 rounded-xl border-2 border-dashed border-red-200 text-red-400 text-sm">
         שגיאה בטעינת הדוח
       </div>
     )
   }
 
   if (!sections) {
-    return (
-      <div className="min-h-screen flex items-center justify-center text-slate-400 text-sm">
-        טוען...
-      </div>
-    )
+    return skeletonLayout(<ReportSkeleton />)
   }
 
   const { section1, section2, section3, section4, section5, section6, section7 } = sections

@@ -1,33 +1,13 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { ReportDataState } from './types'
 import { createReport, fetchDeals, loadReport, saveReport } from './reportDataActions'
-import {
-  MOCK_ID,
-  MOCK_PROJECT,
-  MOCK_SECTION1,
-  MOCK_SECTION2,
-  MOCK_SECTION3,
-  MOCK_SECTION4,
-  MOCK_SECTION5,
-  MOCK_SECTION6,
-  MOCK_SECTION7,
-  MOCK_SECTION8,
-} from '@/mocks/mockProject'
+import { DEFAULT_SECTION8 } from '@/components/sections/Section8EconomicAnalysis/types'
 
 const initialState: ReportDataState = {
-  currentReportId: MOCK_ID,
-  project: MOCK_PROJECT,
-  sections: {
-    section1: MOCK_SECTION1,
-    section2: MOCK_SECTION2,
-    section3: MOCK_SECTION3,
-    section4: MOCK_SECTION4,
-    section5: MOCK_SECTION5,
-    section6: MOCK_SECTION6,
-    section7: MOCK_SECTION7,
-    section8: MOCK_SECTION8,
-  },
-  loadStatus: 'loaded',
+  currentReportId: null,
+  project: null,
+  sections: null,
+  loadStatus: 'idle',
   saveStatus: 'idle',
   fetchDealsStatus: 'idle',
 }
@@ -45,7 +25,10 @@ const reportDataSlice = createSlice({
       .addCase(loadReport.fulfilled, (state, action) => {
         state.currentReportId = action.payload.project.id
         state.project = action.payload.project
-        state.sections = action.payload.sections
+        state.sections = {
+          ...action.payload.sections,
+          section8: action.payload.sections.section8 ?? DEFAULT_SECTION8,
+        }
         state.loadStatus = 'loaded'
       })
       .addCase(loadReport.rejected, (state) => {
@@ -54,7 +37,10 @@ const reportDataSlice = createSlice({
       .addCase(createReport.fulfilled, (state, action) => {
         state.currentReportId = action.payload.project.id
         state.project = action.payload.project
-        state.sections = action.payload.sections
+        state.sections = {
+          ...action.payload.sections,
+          section8: action.payload.sections.section8 ?? DEFAULT_SECTION8,
+        }
         state.loadStatus = 'loaded'
         state.saveStatus = 'idle'
       })
