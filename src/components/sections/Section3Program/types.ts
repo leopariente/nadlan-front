@@ -62,5 +62,3 @@ export function undergroundSqm(row: UndergroundRow): number {
 export function specialUndergroundSqm(row: UndergroundSpecialRow): number {
   return row.parkingSpots * row.avgParkingSqm
 }
-
-export { fmt } from '@/lib/utils'

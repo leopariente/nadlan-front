@@ -1,4 +1,5 @@
-import { undergroundSqm, specialUndergroundSqm, fmt } from './types'
+import { fmt } from '@/lib/utils'
+import { undergroundSqm, specialUndergroundSqm } from './types'
 import type { Section3Data } from './types'
 import { EmptyCell } from './EmptyCell'
 import { UndergroundEditableRow } from './UndergroundEditableRow'

@@ -1,9 +1,9 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
-import { reportDataApi, type CreateReportPayload, type ReportResponse } from './reportDataApi'
+import { ReportDataApi, type CreateReportPayload, type ReportResponse } from './reportDataApi'
 import type { ProjectSummary, Transaction } from '@/types'
 import type { ReportSections } from './types'
 
-const api = new reportDataApi()
+const api = new ReportDataApi()
 
 export const createReport = createAsyncThunk<ReportResponse, CreateReportPayload>(
   'reportData/create',

@@ -1,11 +1,9 @@
 import { cn, fmt } from '@/lib/utils'
 import { Card } from '@/components/shared/Card'
+import { EXISTING_CREDIT_FACTOR, FLAT_RATE_PER_SQM } from '@/constants/levies'
 import type { Section5Data } from '@/types'
 
 const fmtR = (n: number) => n.toLocaleString('he-IL', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-
-const EXISTING_CREDIT_FACTOR = 0.8   // קיזוז 80% משטח קיים
-const FLAT_RATE_PER_SQM      = 500   // ₪ למ"ר עילי (תעריף אחיד)
 
 interface Props {
   data: Section5Data

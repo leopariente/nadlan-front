@@ -1,4 +1,4 @@
-import { fmt } from './types'
+import { fmt } from '@/lib/utils'
 import type { DerivedRow } from './types'
 import { EmptyCell } from './EmptyCell'
 

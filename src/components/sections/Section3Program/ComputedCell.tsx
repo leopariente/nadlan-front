@@ -1,4 +1,4 @@
-import { fmt } from './types'
+import { fmt } from '@/lib/utils'
 
 interface Props {
   value: number

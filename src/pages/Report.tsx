@@ -20,16 +20,6 @@ import { deriveRow, undergroundSqm, specialUndergroundSqm } from '@/components/s
 import BackButton from '@/components/shared/BackButton'
 import ReportSkeleton from '@/components/shared/ReportSkeleton'
 
-// ─── Placeholder for unimplemented sections ───────────────────────────────────
-
-function ComingSoon({ label }: { label: string }) {
-  return (
-    <div className="flex items-center justify-center h-48 rounded-xl border-2 border-dashed border-slate-200 text-slate-400 text-sm">
-      {label} — בבנייה
-    </div>
-  )
-}
-
 // ─── Save button label/style maps ─────────────────────────────────────────────
 
 const saveLabels: Record<SaveStatus, string> = {
@@ -119,7 +109,7 @@ export default function Report() {
     )
   }
 
-  if (!sections) {
+  if (!sections || !id) {
     return skeletonLayout(<ReportSkeleton />)
   }
 
@@ -182,7 +172,6 @@ export default function Report() {
     specialUndergroundSqm(section3.underground.commercial) +
     specialUndergroundSqm(section3.underground.disabled) +
     specialUndergroundSqm(section3.underground.publicBuildings)
-  const s8ExistingTotalBuiltArea = section1.floors.reduce((s, f) => s + f.floorArea + f.balconyArea, 0)
   const s8TotalLeviesAndFees     = computeTotalLeviesAndFees(
     section5,
     section1.registeredArea,
@@ -213,7 +202,7 @@ export default function Report() {
     totalUndergroundArea:      s8TotalUnderground,
     existingUnits:             section1.existingUnits,
     existingCommercialArea:    existingCommercialSqm,
-    existingTotalBuiltArea:    s8ExistingTotalBuiltArea,
+    existingTotalBuiltArea:    existingGrossSqm,
     newTotalUnits:             section2.densityUnits,
     totalLeviesAndFees:        s8TotalLeviesAndFees,
     estimatedBettermentLevy:   s8EstimatedBettermentLevy,
@@ -313,7 +302,7 @@ export default function Report() {
           totalUndergroundArea={s8TotalUnderground}
           existingUnits={section1.existingUnits}
           existingCommercialArea={existingCommercialSqm}
-          existingTotalBuiltArea={s8ExistingTotalBuiltArea}
+          existingTotalBuiltArea={existingGrossSqm}
           newTotalUnits={section2.densityUnits}
           developerUnitsForSale={developerUnits}
           totalLeviesAndFees={s8TotalLeviesAndFees}
@@ -335,7 +324,6 @@ export default function Report() {
           totalConstructionCosts={s8Computed.totalConstructionCosts}
         />
       )
-      default: return <ComingSoon label={sectionLabel} />
     }
   }
 
@@ -360,7 +348,7 @@ export default function Report() {
               size="sm"
               className={saveExtraClass[saveStatus]}
               disabled={saveStatus === 'saving'}
-              onClick={() => dispatch(saveReport({ id: id!, sections }))}
+              onClick={() => dispatch(saveReport({ id, sections }))}
             >
               {saveLabels[saveStatus]}
             </Button>

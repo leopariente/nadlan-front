@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { TabSwitcher } from '@/components/shared/TabSwitcher'
 import { RatesTab } from './RatesTab'
 import { CalcTab } from './CalcTab'
+import { EXISTING_CREDIT_FACTOR, FLAT_RATE_PER_SQM } from '@/constants/levies'
 import type { Section5Data } from '@/types'
 
 type TabKey = 'rates' | 'calc'
@@ -36,9 +37,6 @@ export function computeTotalLeviesAndFees(
   basementSqm: number,
   balconyTotalSqm: number,
 ): number {
-  const FLAT_RATE_PER_SQM = 500
-  const EXISTING_CREDIT_FACTOR = 0.8
-
   const allSurface = residentialGross + commercialGross + basementSqm + balconyTotalSqm
   const existingCredit = existingGrossSqm * EXISTING_CREDIT_FACTOR
   const netNew = allSurface - existingCredit

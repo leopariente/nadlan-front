@@ -1,6 +1,7 @@
 import { TabSwitcher } from '@/components/shared/TabSwitcher'
 import { GeneralPlanTab } from './GeneralPlanTab'
 import { DetailedPlanTab } from './DetailedPlanTab'
+import { ExtractFromPdfButton } from './ExtractFromPdfButton'
 import type { GeneralPlanData, Section2Data } from '@/types'
 
 const DEFAULT_GENERAL_PLAN: GeneralPlanData = {
@@ -39,6 +40,11 @@ export default function Section2PlanningRights({
 }: Props) {
   return (
     <div className="space-y-5">
+      {!readOnly && (
+        <ExtractFromPdfButton
+          onSuccess={extracted => onChange({ ...data, ...extracted })}
+        />
+      )}
       <TabSwitcher
         tabs={TABS}
         activeTab={data.planType}

@@ -1,4 +1,4 @@
-import type { ProjectSummary, Transaction } from '@/types'
+import type { ProjectSummary, Transaction, Section2Data } from '@/types'
 import type { ReportSections } from './types'
 import { api } from '@/store/projects/projectsApi'
 
@@ -37,7 +37,7 @@ export interface ReportResponse {
   sections: Omit<ReportSections, 'section8'> & { section8?: ReportSections['section8'] }
 }
 
-export class reportDataApi {
+export class ReportDataApi {
   createReport(payload: CreateReportPayload): Promise<ReportResponse> {
     return api.post<ReportResponse>('/api/reports', payload).then(r => r.data)
   }
@@ -54,5 +54,17 @@ export class reportDataApi {
     return api
       .get<DealApiRecord[]>('/api/deals', { params: { gush, helka } })
       .then(r => r.data.map(mapDeal))
+  }
+
+  extractRights(reportId: string, file: File): Promise<{ section2: Section2Data; page_count: number }> {
+    const form = new FormData()
+    form.append('file', file)
+    return api
+      .post<{ section2: Section2Data; page_count: number }>(
+        `/api/reports/${reportId}/extract-rights`,
+        form,
+        { headers: { 'Content-Type': 'multipart/form-data' } },
+      )
+      .then(r => r.data)
   }
 }

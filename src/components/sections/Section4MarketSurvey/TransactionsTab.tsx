@@ -80,26 +80,26 @@ export function TransactionsTab({
   const totalPrice  = valid.reduce((s, t) => s + t.reportedPriceILS, 0)
   const avgPriceSqm = totalArea > 0 ? totalPrice / totalArea : 0
 
-  const numInput = (id: string, field: 'rooms' | 'netAreaSqm' | 'reportedPriceILS') => (
+  const numInput = (t: Transaction, field: 'rooms' | 'netAreaSqm' | 'reportedPriceILS') => (
     <input
       type="number"
       min={0}
       className="cell-input"
-      value={(transactions.find(t => t.id === id)?.[field] as number) || ''}
+      value={t[field] || ''}
       disabled={readOnly}
       placeholder="0"
-      onChange={e => updateRow(id, { [field]: parseFloat(e.target.value) || 0 })}
+      onChange={e => updateRow(t.id, { [field]: parseFloat(e.target.value) || 0 })}
     />
   )
 
-  const textInput = (id: string, field: 'saleDate' | 'address' | 'gushHelka' | 'floor', placeholder = '') => (
+  const textInput = (t: Transaction, field: 'saleDate' | 'address' | 'gushHelka' | 'floor', placeholder = '') => (
     <input
       type="text"
       className="cell-input"
-      value={transactions.find(t => t.id === id)?.[field] ?? ''}
+      value={t[field] ?? ''}
       disabled={readOnly}
       placeholder={placeholder}
-      onChange={e => updateRow(id, { [field]: e.target.value })}
+      onChange={e => updateRow(t.id, { [field]: e.target.value })}
     />
   )
 
@@ -132,13 +132,13 @@ export function TransactionsTab({
                       i % 2 === 0 ? 'bg-white' : 'bg-slate-50/40',
                     )}
                   >
-                    <td className="px-0 py-0 border-e border-slate-100">{textInput(t.id, 'saleDate', 'DD/MM/YYYY')}</td>
-                    <td className="px-0 py-0 border-e border-slate-100">{textInput(t.id, 'address')}</td>
-                    <td className="px-0 py-0 border-e border-slate-100">{textInput(t.id, 'gushHelka')}</td>
-                    <td className="px-0 py-0 border-e border-slate-100">{textInput(t.id, 'floor')}</td>
-                    <td className="px-0 py-0 border-e border-slate-100">{numInput(t.id, 'rooms')}</td>
-                    <td className="px-0 py-0 border-e border-slate-100">{numInput(t.id, 'netAreaSqm')}</td>
-                    <td className="px-0 py-0 border-e border-slate-100">{numInput(t.id, 'reportedPriceILS')}</td>
+                    <td className="px-0 py-0 border-e border-slate-100">{textInput(t, 'saleDate', 'DD/MM/YYYY')}</td>
+                    <td className="px-0 py-0 border-e border-slate-100">{textInput(t, 'address')}</td>
+                    <td className="px-0 py-0 border-e border-slate-100">{textInput(t, 'gushHelka')}</td>
+                    <td className="px-0 py-0 border-e border-slate-100">{textInput(t, 'floor')}</td>
+                    <td className="px-0 py-0 border-e border-slate-100">{numInput(t, 'rooms')}</td>
+                    <td className="px-0 py-0 border-e border-slate-100">{numInput(t, 'netAreaSqm')}</td>
+                    <td className="px-0 py-0 border-e border-slate-100">{numInput(t, 'reportedPriceILS')}</td>
                     <td className="px-3 py-2 text-right font-medium text-slate-700 bg-slate-100/70 border-e border-slate-100 tabular-nums whitespace-nowrap">
                       {pps > 0 ? pps.toLocaleString('he-IL') : '—'}
                     </td>

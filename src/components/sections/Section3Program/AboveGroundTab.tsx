@@ -1,4 +1,5 @@
-import { deriveRow, fmt } from './types'
+import { fmt } from '@/lib/utils'
+import { deriveRow } from './types'
 import type { Section3Data, DerivedRow } from './types'
 import { EmptyCell } from './EmptyCell'
 import { inputCls } from './InputCell'
