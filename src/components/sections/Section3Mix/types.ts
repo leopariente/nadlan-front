@@ -1,5 +1,23 @@
-// Section 3 has no user-editable state — all inputs derived from sections 4 and 8.
-// Empty type kept for backend compatibility (section3 key still sent in PUT /api/reports/:id).
-export type Section3Data = Record<string, never>
+export interface CustomUnitType {
+  id: string
+  type: string
+  count: number
+  mainArea: number
+}
 
-export const DEFAULT_SECTION3: Section3Data = {}
+export interface Section3Data {
+  overrides: {
+    smallCount?: number
+    smallArea?: number
+    stdCount?: number
+    stdArea?: number
+    largeCount?: number
+    largeArea?: number
+  }
+  customTypes: CustomUnitType[]
+}
+
+export const DEFAULT_SECTION3: Section3Data = {
+  overrides: {},
+  customTypes: [],
+}

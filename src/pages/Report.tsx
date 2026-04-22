@@ -122,7 +122,7 @@ export default function Report() {
     return skeletonLayout(<ReportSkeleton />)
   }
 
-  const { section1, section2, section4, section5, section6, section7 } = sections
+  const { section1, section2, section3, section4, section5, section6, section7 } = sections
   const section8 = sections.section8
 
   // Section 2 derived
@@ -206,12 +206,26 @@ export default function Report() {
       )
       case 3: return (
         <Section3Mix
+          data={section3}
+          onChange={data => setSections(prev => ({ ...prev!, section3: data }))}
           pricePerSqm={s4ResidentialPrice}
           constructionCostAbove={section8.t1ResidentialRate}
           constructionCostBelow={section8.t1UndergroundRate}
           totalMainArea={section2.residentialMainArea}
           totalUnits={section2.densityUnits}
           totalUndergroundArea={section2.undergroundSqm}
+          onPricePerSqmChange={v => setSections(prev => ({
+            ...prev!,
+            section4: { ...prev!.section4, newApartments: { ...prev!.section4.newApartments, selectedPricePerSqm: v } },
+          }))}
+          onConstructionCostAboveChange={v => setSections(prev => ({
+            ...prev!,
+            section8: { ...prev!.section8, t1ResidentialRate: v },
+          }))}
+          onConstructionCostBelowChange={v => setSections(prev => ({
+            ...prev!,
+            section8: { ...prev!.section8, t1UndergroundRate: v },
+          }))}
         />
       )
       case 4: return (

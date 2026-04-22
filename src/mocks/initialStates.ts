@@ -33,7 +33,10 @@ export const INITIAL_SECTION2: Section2Data = {
   },
 }
 
-export const INITIAL_SECTION3: Section3Data = {}
+export const INITIAL_SECTION3: Section3Data = {
+  overrides: {},
+  customTypes: [],
+}
 
 export const INITIAL_SECTION4: Section4Data = {
   newApartments:       { transactions: [], selectedPricePerSqm: 0 },

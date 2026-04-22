@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { ReportDataState } from './types'
-import type { Section2Data } from '@/types'
+import type { Section2Data, Section3Data, CustomUnitType } from '@/types'
 import { createReport, fetchDeals, loadReport, saveReport } from './reportDataActions'
 import { DEFAULT_SECTION8 } from '@/components/sections/Section8EconomicAnalysis/types'
 
@@ -28,10 +28,17 @@ const reportDataSlice = createSlice({
         state.project = action.payload.project
         const rawS2 = action.payload.sections.section2 as unknown as { undergroundSqm?: number } & Section2Data
         const section2: Section2Data = { ...rawS2, undergroundSqm: rawS2.undergroundSqm ?? 0 }
+        const raw3 = action.payload.sections.section3 as unknown as Record<string, unknown>
+        const section3: Section3Data = {
+          overrides: (typeof raw3.overrides === 'object' && raw3.overrides !== null
+            ? raw3.overrides as Section3Data['overrides']
+            : {}),
+          customTypes: Array.isArray(raw3.customTypes) ? raw3.customTypes as CustomUnitType[] : [],
+        }
         state.sections = {
           ...action.payload.sections,
           section2,
-          section3: {},
+          section3,
           section8: action.payload.sections.section8 ?? DEFAULT_SECTION8,
         }
         state.loadStatus = 'loaded'
@@ -44,10 +51,17 @@ const reportDataSlice = createSlice({
         state.project = action.payload.project
         const rawS2 = action.payload.sections.section2 as unknown as { undergroundSqm?: number } & Section2Data
         const section2: Section2Data = { ...rawS2, undergroundSqm: rawS2.undergroundSqm ?? 0 }
+        const raw3 = action.payload.sections.section3 as unknown as Record<string, unknown>
+        const section3: Section3Data = {
+          overrides: (typeof raw3.overrides === 'object' && raw3.overrides !== null
+            ? raw3.overrides as Section3Data['overrides']
+            : {}),
+          customTypes: Array.isArray(raw3.customTypes) ? raw3.customTypes as CustomUnitType[] : [],
+        }
         state.sections = {
           ...action.payload.sections,
           section2,
-          section3: {},
+          section3,
           section8: action.payload.sections.section8 ?? DEFAULT_SECTION8,
         }
         state.loadStatus = 'loaded'

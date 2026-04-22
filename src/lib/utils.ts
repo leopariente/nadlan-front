@@ -29,3 +29,13 @@ export function parseCurrencyInput(raw: string): number {
 export function isNegativeValue(value: number): boolean {
   return value < 0
 }
+
+/** Returns true if a JWT is expired (or unparseable). */
+export function isTokenExpired(token: string): boolean {
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1])) as { exp?: number }
+    return payload.exp !== undefined && Date.now() >= payload.exp * 1000
+  } catch {
+    return true
+  }
+}
