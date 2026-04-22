@@ -56,6 +56,10 @@ export function DetailedPlanTab({ data, onChange, readOnly }: Props) {
         </div>
       </Card>
 
+      <Card title='תת-קרקע' bodyClassName="p-5">
+        <Field label='שטח שירות תת-קרקעי מותר (מ"ר)'>{numInput('undergroundSqm')}</Field>
+      </Card>
+
       <Card title="מסחר" bodyClassName="p-5 space-y-5">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
           <Field label='שטח לבנייה עיקרי — מסחר (מ"ר)'>{numInput('commercialMainArea')}</Field>

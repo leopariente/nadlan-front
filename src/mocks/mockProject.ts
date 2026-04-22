@@ -36,6 +36,7 @@ export const MOCK_SECTION2: Section2Data = {
   commercialServiceArea: 70,
   densityUnits: 48,
   mamadSqm: 12,
+  undergroundSqm: 0,
   generalPlan: {
     coveragePct: 50,
     floors: 9,
@@ -47,33 +48,7 @@ export const MOCK_SECTION2: Section2Data = {
   },
 }
 
-const EMPTY_UNDERGROUND_SPECIAL = { additionalSqm: 0, parkingSpots: 0, avgParkingSqm: 45 }
-
-export const MOCK_SECTION3: Section3Data = {
-  tenantRow: {
-    mainAreaPerUnit: 90,
-    mamadPerUnit: 12,
-    sharedAreaPerUnit: 8,
-    openBalconyPerUnit: 12,
-    roofBalconySqm: 0,
-  },
-  developerRow: {
-    mainAreaPerUnit: 110,
-    mamadPerUnit: 12,
-    sharedAreaPerUnit: 8,
-    openBalconyPerUnit: 15,
-    roofBalconySqm: 200,
-  },
-  commercial: { sqm: 350 },
-  publicBuildings: { sqm: 0 },
-  underground: {
-    tenantRow:     { parkingPerUnit: 1, parkingAboveGround: 0,  parkingUnderground: 24, avgParkingSqm: 45 },
-    developerRow:  { parkingPerUnit: 1.5, parkingAboveGround: 0, parkingUnderground: 36, avgParkingSqm: 45 },
-    commercial:    { additionalSqm: 350, parkingSpots: 4,  avgParkingSqm: 45 },
-    disabled:      { additionalSqm: 0,   parkingSpots: 3,  avgParkingSqm: 45 },
-    publicBuildings: EMPTY_UNDERGROUND_SPECIAL,
-  },
-}
+export const MOCK_SECTION3: Section3Data = {}
 
 export const MOCK_SECTION4: Section4Data = {
   newApartments: {

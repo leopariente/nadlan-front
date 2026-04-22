@@ -18,6 +18,7 @@ export interface Section2Data {
   commercialServiceArea: number    // שטח שירות מסחר
   densityUnits: number             // סה"כ יח"ד לפי צפיפות
   mamadSqm: number                 // שטח ממ"ד ליח"ד (default: 12)
+  undergroundSqm: number           // שטח שירות תת-קרקעי מותר (default: 0)
 
   // תכנית כוללנית fields
   generalPlan: GeneralPlanData

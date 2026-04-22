@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { ReportDataState } from './types'
+import type { Section2Data } from '@/types'
 import { createReport, fetchDeals, loadReport, saveReport } from './reportDataActions'
 import { DEFAULT_SECTION8 } from '@/components/sections/Section8EconomicAnalysis/types'
 
@@ -25,8 +26,12 @@ const reportDataSlice = createSlice({
       .addCase(loadReport.fulfilled, (state, action) => {
         state.currentReportId = action.payload.project.id
         state.project = action.payload.project
+        const rawS2 = action.payload.sections.section2 as unknown as { undergroundSqm?: number } & Section2Data
+        const section2: Section2Data = { ...rawS2, undergroundSqm: rawS2.undergroundSqm ?? 0 }
         state.sections = {
           ...action.payload.sections,
+          section2,
+          section3: {},
           section8: action.payload.sections.section8 ?? DEFAULT_SECTION8,
         }
         state.loadStatus = 'loaded'
@@ -37,8 +42,12 @@ const reportDataSlice = createSlice({
       .addCase(createReport.fulfilled, (state, action) => {
         state.currentReportId = action.payload.project.id
         state.project = action.payload.project
+        const rawS2 = action.payload.sections.section2 as unknown as { undergroundSqm?: number } & Section2Data
+        const section2: Section2Data = { ...rawS2, undergroundSqm: rawS2.undergroundSqm ?? 0 }
         state.sections = {
           ...action.payload.sections,
+          section2,
+          section3: {},
           section8: action.payload.sections.section8 ?? DEFAULT_SECTION8,
         }
         state.loadStatus = 'loaded'

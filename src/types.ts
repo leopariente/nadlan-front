@@ -1,5 +1,5 @@
 export type { Section1Data } from './components/sections/Section1ExistingState/types'
-export type { AboveGroundRow, UndergroundRow, UndergroundSpecialRow, Section3Data } from './components/sections/Section3Program/types'
+export type { Section3Data } from './components/sections/Section3Mix/types'
 export type { GeneralPlanData, Section2Data } from './components/sections/Section2PlanningRights/types'
 export type { Transaction, Section4Data } from './components/sections/Section4MarketSurvey/types'
 export type { Section5Data } from './components/sections/Section5Levies/types'

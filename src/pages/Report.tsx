@@ -10,13 +10,12 @@ import Section1ExistingState from '@/components/sections/Section1ExistingState'
 import Section2PlanningRights from '@/components/sections/Section2PlanningRights'
 import Section4MarketSurvey from '@/components/sections/Section4MarketSurvey'
 import Section5Levies, { computeTotalLeviesAndFees } from '@/components/sections/Section5Levies'
-import Section3Program from '@/components/sections/Section3Program'
+import Section3Mix from '@/components/sections/Section3Mix'
 import Section6BettermentLevy, { computeEstimatedBettermentLevy } from '@/components/sections/Section6BettermentLevy'
 import Section7InventoryValue from '@/components/sections/Section7InventoryValue'
 import Section8EconomicAnalysis, { computeSection8 } from '@/components/sections/Section8EconomicAnalysis'
 import Section9Summary from '@/components/sections/Section9Summary'
 import { SECTIONS, type SectionNumber } from '@/constants/sections'
-import { deriveRow, undergroundSqm, specialUndergroundSqm } from '@/components/sections/Section3Program/types'
 import BackButton from '@/components/shared/BackButton'
 import ReportSkeleton from '@/components/shared/ReportSkeleton'
 
@@ -123,7 +122,7 @@ export default function Report() {
     return skeletonLayout(<ReportSkeleton />)
   }
 
-  const { section1, section2, section3, section4, section5, section6, section7 } = sections
+  const { section1, section2, section4, section5, section6, section7 } = sections
   const section8 = sections.section8
 
   // Section 2 derived
@@ -151,19 +150,12 @@ export default function Report() {
   const s9CommRevenueK           = Math.round(developerCommercialSqm * s4CommercialPrice  / 1000)
   const s9TotalDeveloperRevenue  = Math.round(s9ResRevenueK / s9VatFactor) + s9CommRevenueK
 
-  // Section 8 inputs — derived from sections 2, 3, 5, 6, 7
-  const s3TenantDerived          = deriveRow(section3.tenantRow, 0)
-  const s3DeveloperDerived       = deriveRow(section3.developerRow, developerUnits)
-  const s8TotalGrossResidential  = s3TenantDerived.totalGross + s3DeveloperDerived.totalGross
+  // Section 8 inputs — derived from sections 2, 5, 6, 7
+  const s8TotalGrossResidential  = s2ResidentialGross
   const s8TotalGrossCommercial   = section2.commercialMainArea + section2.commercialServiceArea
-  const s8TotalOpenBalconies     = s3TenantDerived.totalOpenBalcony + s3DeveloperDerived.totalOpenBalcony
-  const s8TotalRoofBalconies     = section3.tenantRow.roofBalconySqm + section3.developerRow.roofBalconySqm
-  const s8TotalUnderground       =
-    undergroundSqm(section3.underground.tenantRow) +
-    undergroundSqm(section3.underground.developerRow) +
-    specialUndergroundSqm(section3.underground.commercial) +
-    specialUndergroundSqm(section3.underground.disabled) +
-    specialUndergroundSqm(section3.underground.publicBuildings)
+  const s8TotalOpenBalconies     = 0
+  const s8TotalRoofBalconies     = 0
+  const s8TotalUnderground       = section2.undergroundSqm
   const s8TotalLeviesAndFees     = computeTotalLeviesAndFees(
     section5,
     section1.registeredArea,
@@ -213,14 +205,13 @@ export default function Report() {
         />
       )
       case 3: return (
-        <Section3Program
-          data={section3}
-          onChange={data => setSections(prev => ({ ...prev!, section3: data }))}
-          developerUnits={developerUnits}
-          developerFloorplateSqm={developerFloorplateSqm}
-          residentialGross={s2ResidentialGross}
-          commercialMainArea={section2.commercialMainArea}
-          commercialServiceArea={section2.commercialServiceArea}
+        <Section3Mix
+          pricePerSqm={s4ResidentialPrice}
+          constructionCostAbove={section8.t1ResidentialRate}
+          constructionCostBelow={section8.t1UndergroundRate}
+          totalMainArea={section2.residentialMainArea}
+          totalUnits={section2.densityUnits}
+          totalUndergroundArea={section2.undergroundSqm}
         />
       )
       case 4: return (

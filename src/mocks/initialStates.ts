@@ -8,9 +8,6 @@ import type {
   Section7Data,
 } from '@/types'
 
-const EMPTY_UNDERGROUND_ROW = { parkingPerUnit: 0, parkingAboveGround: 0, parkingUnderground: 0, avgParkingSqm: 45 }
-const EMPTY_UNDERGROUND_SPECIAL = { additionalSqm: 0, parkingSpots: 0, avgParkingSqm: 45 }
-
 export const INITIAL_SECTION1: Section1Data = {
   registeredArea: 0,
   ownershipShare: '',
@@ -24,6 +21,7 @@ export const INITIAL_SECTION2: Section2Data = {
   commercialServiceArea: 0,
   densityUnits: 0,
   mamadSqm: 12,
+  undergroundSqm: 0,
   generalPlan: {
     coveragePct: 50,
     floors: 9,
@@ -35,19 +33,7 @@ export const INITIAL_SECTION2: Section2Data = {
   },
 }
 
-export const INITIAL_SECTION3: Section3Data = {
-  tenantRow:    { mainAreaPerUnit: 0, mamadPerUnit: 12, sharedAreaPerUnit: 8, openBalconyPerUnit: 12, roofBalconySqm: 0 },
-  developerRow: { mainAreaPerUnit: 0, mamadPerUnit: 12, sharedAreaPerUnit: 8, openBalconyPerUnit: 12, roofBalconySqm: 0 },
-  commercial: { sqm: 0 },
-  publicBuildings: { sqm: 0 },
-  underground: {
-    tenantRow:      EMPTY_UNDERGROUND_ROW,
-    developerRow:   EMPTY_UNDERGROUND_ROW,
-    commercial:     EMPTY_UNDERGROUND_SPECIAL,
-    disabled:       EMPTY_UNDERGROUND_SPECIAL,
-    publicBuildings: EMPTY_UNDERGROUND_SPECIAL,
-  },
-}
+export const INITIAL_SECTION3: Section3Data = {}
 
 export const INITIAL_SECTION4: Section4Data = {
   newApartments:       { transactions: [], selectedPricePerSqm: 0 },
