@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { ReportDataState } from './types'
-import type { Section2Data, Section3Data, CustomUnitType } from '@/types'
+import type { Section2Data, Section3Data, UnitType } from '@/types'
 import { createReport, fetchDeals, loadReport, saveReport } from './reportDataActions'
 import { DEFAULT_SECTION8 } from '@/components/sections/Section8EconomicAnalysis/types'
 
@@ -30,10 +30,7 @@ const reportDataSlice = createSlice({
         const section2: Section2Data = { ...rawS2, undergroundSqm: rawS2.undergroundSqm ?? 0 }
         const raw3 = action.payload.sections.section3 as unknown as Record<string, unknown>
         const section3: Section3Data = {
-          overrides: (typeof raw3.overrides === 'object' && raw3.overrides !== null
-            ? raw3.overrides as Section3Data['overrides']
-            : {}),
-          customTypes: Array.isArray(raw3.customTypes) ? raw3.customTypes as CustomUnitType[] : [],
+          units: Array.isArray(raw3.units) ? raw3.units as UnitType[] : [],
         }
         state.sections = {
           ...action.payload.sections,
@@ -53,10 +50,7 @@ const reportDataSlice = createSlice({
         const section2: Section2Data = { ...rawS2, undergroundSqm: rawS2.undergroundSqm ?? 0 }
         const raw3 = action.payload.sections.section3 as unknown as Record<string, unknown>
         const section3: Section3Data = {
-          overrides: (typeof raw3.overrides === 'object' && raw3.overrides !== null
-            ? raw3.overrides as Section3Data['overrides']
-            : {}),
-          customTypes: Array.isArray(raw3.customTypes) ? raw3.customTypes as CustomUnitType[] : [],
+          units: Array.isArray(raw3.units) ? raw3.units as UnitType[] : [],
         }
         state.sections = {
           ...action.payload.sections,

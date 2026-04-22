@@ -1,23 +1,15 @@
-export interface CustomUnitType {
+export interface UnitType {
   id: string
   type: string
   count: number
   mainArea: number
+  priceMultiplier: number
 }
 
 export interface Section3Data {
-  overrides: {
-    smallCount?: number
-    smallArea?: number
-    stdCount?: number
-    stdArea?: number
-    largeCount?: number
-    largeArea?: number
-  }
-  customTypes: CustomUnitType[]
+  units: UnitType[]
 }
 
 export const DEFAULT_SECTION3: Section3Data = {
-  overrides: {},
-  customTypes: [],
+  units: [],
 }

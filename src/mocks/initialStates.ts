@@ -34,8 +34,7 @@ export const INITIAL_SECTION2: Section2Data = {
 }
 
 export const INITIAL_SECTION3: Section3Data = {
-  overrides: {},
-  customTypes: [],
+  units: [],
 }
 
 export const INITIAL_SECTION4: Section4Data = {

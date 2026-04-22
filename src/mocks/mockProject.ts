@@ -49,8 +49,7 @@ export const MOCK_SECTION2: Section2Data = {
 }
 
 export const MOCK_SECTION3: Section3Data = {
-  overrides: {},
-  customTypes: [],
+  units: [],
 }
 
 export const MOCK_SECTION4: Section4Data = {

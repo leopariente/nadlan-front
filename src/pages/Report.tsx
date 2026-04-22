@@ -10,7 +10,7 @@ import Section1ExistingState from '@/components/sections/Section1ExistingState'
 import Section2PlanningRights from '@/components/sections/Section2PlanningRights'
 import Section4MarketSurvey from '@/components/sections/Section4MarketSurvey'
 import Section5Levies, { computeTotalLeviesAndFees } from '@/components/sections/Section5Levies'
-import Section3Mix from '@/components/sections/Section3Mix'
+import Section3Mix, { computeSection3Revenue } from '@/components/sections/Section3Mix'
 import Section6BettermentLevy, { computeEstimatedBettermentLevy } from '@/components/sections/Section6BettermentLevy'
 import Section7InventoryValue from '@/components/sections/Section7InventoryValue'
 import Section8EconomicAnalysis, { computeSection8 } from '@/components/sections/Section8EconomicAnalysis'
@@ -145,10 +145,9 @@ export default function Report() {
   const s9TotalNewUnits          = section2.densityUnits
   const s9TotalFloorAreaProject  = developerFloorplateSqm
   const s9CompensationPerUnit    = 0
-  const s9VatFactor              = 1 + section7.vatPct / 100
-  const s9ResRevenueK            = Math.round(developerFloorplateSqm * s4ResidentialPrice / 1000)
-  const s9CommRevenueK           = Math.round(developerCommercialSqm * s4CommercialPrice  / 1000)
-  const s9TotalDeveloperRevenue  = Math.round(s9ResRevenueK / s9VatFactor) + s9CommRevenueK
+  const s9TotalDeveloperRevenue  = Math.round(
+    computeSection3Revenue(section3, s4ResidentialPrice),
+  )
 
   // Section 8 inputs — derived from sections 2, 5, 6, 7
   const s8TotalGrossResidential  = s2ResidentialGross

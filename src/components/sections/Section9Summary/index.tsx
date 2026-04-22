@@ -1,4 +1,4 @@
-import { cn, fmt } from '@/lib/utils'
+import { cn, fmt, formatCurrency } from '@/lib/utils'
 import { Card } from '@/components/shared/Card'
 
 const fmtPct = (n: number) => n.toLocaleString('he-IL', { minimumFractionDigits: 1, maximumFractionDigits: 1 })
@@ -9,8 +9,8 @@ interface Props {
   compensationPerUnit: number
   developerUnitsForSale: number
   developerFloorAreaForSale: number
-  totalDeveloperRevenue: number    // אלפי ₪
-  totalConstructionCosts: number   // אלפי ₪
+  totalDeveloperRevenue: number
+  totalConstructionCosts: number
 }
 
 export default function Section9Summary({
@@ -65,17 +65,17 @@ export default function Section9Summary({
     },
     {
       label: 'סה"כ פדיון חזוי ליזם',
-      value: `${fmt(totalDeveloperRevenue)} א׳ ₪`,
+      value: formatCurrency(totalDeveloperRevenue),
       kind:  'display',
     },
     {
       label: 'סה"כ עלויות הקמה',
-      value: `${fmt(totalConstructionCosts)} א׳ ₪`,
+      value: formatCurrency(totalConstructionCosts),
       kind:  'display',
     },
     {
       label: 'עודף חזוי בפרויקט',
-      value: `${fmt(surplus)} א׳ ₪`,
+      value: formatCurrency(surplus),
       kind:  'calc-signed',
       signed: true,
     },
