@@ -1,15 +1,14 @@
 import { useState } from 'react'
 import { useNavigate, Navigate } from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { setToken } from '@/store/auth/authSlice'
-import { login } from '@/store/auth/authApi'
+import { loginThunk } from '@/store/auth/authActions'
 import { inputClass } from '@/components/shared/formStyles'
 
 export default function Login() {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
-  const token = useAppSelector(state => state.auth.token)
-  if (token) return <Navigate to="/" replace />
+  const accessToken = useAppSelector(state => state.auth.accessToken)
+  if (accessToken) return <Navigate to="/" replace />
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
@@ -20,8 +19,7 @@ export default function Login() {
     setError(null)
     setLoading(true)
     try {
-      const { access_token } = await login(username, password)
-      dispatch(setToken(access_token))
+      await dispatch(loginThunk({ username, password })).unwrap()
       navigate('/')
     } catch {
       setError('שם משתמש או סיסמה שגויים')

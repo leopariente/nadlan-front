@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { useAppDispatch } from '@/hooks/redux'
-import { clearToken } from '@/store/auth/authSlice'
+import { logoutThunk } from '@/store/auth/authActions'
 
 interface Props {
   onMenuClick?: () => void
@@ -11,7 +11,7 @@ export default function TopBar({ onMenuClick }: Props) {
   const navigate = useNavigate()
 
   function handleSignOut() {
-    dispatch(clearToken())
+    dispatch(logoutThunk())
     navigate('/login')
   }
 
