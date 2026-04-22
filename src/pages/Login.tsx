@@ -8,11 +8,12 @@ export default function Login() {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
   const accessToken = useAppSelector(state => state.auth.accessToken)
-  if (accessToken) return <Navigate to="/" replace />
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+
+  if (accessToken) return <Navigate to="/" replace />
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()

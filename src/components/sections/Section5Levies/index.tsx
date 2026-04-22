@@ -15,12 +15,9 @@ interface Props {
   data: Section5Data
   onChange: (data: Section5Data) => void
   registeredArea: number
-  existingGrossSqm: number
-  existingUnits: number
   residentialGross: number
   commercialGross: number
   basementSqm: number
-  balconyTotalSqm: number
   densityUnits: number
   readOnly?: boolean
 }
@@ -30,18 +27,13 @@ interface Props {
 export function computeTotalLeviesAndFees(
   data: Section5Data,
   registeredArea: number,
-  existingGrossSqm: number,
   residentialGross: number,
   commercialGross: number,
   basementSqm: number,
-  balconyTotalSqm: number,
 ): number {
   const FLAT_RATE_PER_SQM = 500
-  const EXISTING_CREDIT_FACTOR = 0.8
 
-  const allSurface = residentialGross + commercialGross + basementSqm + balconyTotalSqm
-  const existingCredit = existingGrossSqm * EXISTING_CREDIT_FACTOR
-  const netNew = allSurface - existingCredit
+  const allSurface = residentialGross + commercialGross + basementSqm
   const aboveGround = residentialGross + commercialGross
 
   if (data.useFlatRate) return aboveGround * FLAT_RATE_PER_SQM
@@ -50,12 +42,12 @@ export function computeTotalLeviesAndFees(
   const subtotal =
     allSurface * rates.constructionPermit +
     registeredArea * rates.roadLand +
-    netNew * rates.roadBuilding +
+    allSurface * rates.roadBuilding +
     registeredArea * rates.sidewalkLand +
-    netNew * rates.sidewalkBuilding +
+    allSurface * rates.sidewalkBuilding +
     registeredArea * rates.drainageLand +
-    netNew * rates.drainageBuilding +
-    netNew * rates.waterAuthority
+    allSurface * rates.drainageBuilding +
+    allSurface * rates.waterAuthority
 
   return subtotal * (1 + rates.safetyBuffer / 100)
 }
@@ -64,12 +56,9 @@ export default function Section5Levies({
   data,
   onChange,
   registeredArea,
-  existingGrossSqm,
-  existingUnits,
   residentialGross,
   commercialGross,
   basementSqm,
-  balconyTotalSqm,
   densityUnits,
   readOnly = false,
 }: Props) {
@@ -91,12 +80,9 @@ export default function Section5Levies({
         <CalcTab
           data={data}
           registeredArea={registeredArea}
-          existingGrossSqm={existingGrossSqm}
-          existingUnits={existingUnits}
           residentialGross={residentialGross}
           commercialGross={commercialGross}
           basementSqm={basementSqm}
-          balconyTotalSqm={balconyTotalSqm}
           densityUnits={densityUnits}
         />
       )}

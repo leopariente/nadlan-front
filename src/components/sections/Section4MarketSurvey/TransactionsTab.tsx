@@ -28,6 +28,7 @@ interface Props {
   onSelectedPriceChange: (v: number) => void
   onGenerate: () => void
   generating: boolean
+  noDealsFound?: boolean
   readOnly: boolean
 }
 
@@ -38,6 +39,7 @@ export function TransactionsTab({
   onSelectedPriceChange,
   onGenerate,
   generating,
+  noDealsFound = false,
   readOnly,
 }: Props) {
   const [confirmOpen, setConfirmOpen] = useState(false)
@@ -164,7 +166,9 @@ export function TransactionsTab({
                     colSpan={readOnly ? 8 : 9}
                     className="px-4 py-8 text-center text-sm text-slate-400"
                   >
-                    אין עסקאות — לחץ &quot;הוסף עסקה&quot; להוספה
+                    {noDealsFound
+                      ? 'לא נמצאו עסקאות בשנה האחרונה'
+                      : 'אין עסקאות — לחץ "הוסף עסקה" להוספה'}
                   </td>
                 </tr>
               )}

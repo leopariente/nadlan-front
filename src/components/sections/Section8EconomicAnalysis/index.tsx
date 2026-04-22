@@ -25,9 +25,6 @@ interface Props {
   totalOpenBalconies: number
   totalRoofBalconies: number
   totalUndergroundArea: number
-  existingUnits: number
-  existingCommercialArea: number
-  existingTotalBuiltArea: number
   newTotalUnits: number
   developerUnitsForSale: number
   // From Section 5
@@ -49,9 +46,6 @@ export default function Section8EconomicAnalysis({
   totalOpenBalconies,
   totalRoofBalconies,
   totalUndergroundArea,
-  existingUnits,
-  existingCommercialArea,
-  existingTotalBuiltArea,
   newTotalUnits,
   totalLeviesAndFees,
   estimatedBettermentLevy,
@@ -76,7 +70,7 @@ export default function Section8EconomicAnalysis({
     data.t1ParkingCompRate * data.t1ParkingCompQty +
     data.t1UndergroundRate * totalUndergroundArea +
     data.t1OutdoorDevRate * data.t1OutdoorDevQty +
-    data.t1DemolitionRate * existingTotalBuiltArea +
+    data.t1DemolitionRate * 0 +
     data.t1PublicBuildingRate * data.t1PublicBuildingQty +
     data.t1LandscapeTotal
 
@@ -90,12 +84,7 @@ export default function Section8EconomicAnalysis({
     (data.t2BrokeragePct / 100) * developerRevenueExVat +
     (data.t2LegalPct / 100) * totalRevenueIncVat
 
-  const table3Total =
-    data.t3ResRentRate * existingUnits * data.constructionMonths +
-    data.t3CommRentRate * existingCommercialArea * data.constructionMonths +
-    data.t3MovingRate * existingUnits +
-    data.t3LawyerRate * existingUnits +
-    data.t3MaintenanceFundRate * existingUnits * 60
+  const table3Total = 0
 
   const table4Total =
     (data.t4PurchaseTaxPct / 100) * data.t4PurchaseTaxBasis +
@@ -205,10 +194,10 @@ export default function Section8EconomicAnalysis({
       rateValue: data.t1DemolitionRate,
       rateEditable: true,
       onRateChange: set('t1DemolitionRate'),
-      quantityValue: existingTotalBuiltArea,
+      quantityValue: 0,
       quantityUnit: 'מ"ר',
       calculationBasis: 'סה"כ שטח קיים להריסה',
-      total: data.t1DemolitionRate * existingTotalBuiltArea,
+      total: 0,
     },
     {
       key: 'publicBuilding',
@@ -341,10 +330,10 @@ export default function Section8EconomicAnalysis({
       rateValue: data.t3ResRentRate,
       rateEditable: true,
       onRateChange: set('t3ResRentRate'),
-      quantityValue: existingUnits,
+      quantityValue: 0,
       quantityUnit: 'יח"ד',
       calculationBasis: `יחידות קיימות למשך ${data.constructionMonths} חודשי הקמה`,
-      total: data.t3ResRentRate * existingUnits * data.constructionMonths,
+      total: 0,
     },
     {
       key: 'commRent',
@@ -353,10 +342,10 @@ export default function Section8EconomicAnalysis({
       rateValue: data.t3CommRentRate,
       rateEditable: true,
       onRateChange: set('t3CommRentRate'),
-      quantityValue: existingCommercialArea,
+      quantityValue: 0,
       quantityUnit: 'מ"ר',
       calculationBasis: `יחידות קיימות למשך ${data.constructionMonths} חודשי הקמה`,
-      total: data.t3CommRentRate * existingCommercialArea * data.constructionMonths,
+      total: 0,
     },
     {
       key: 'moving',
@@ -365,10 +354,10 @@ export default function Section8EconomicAnalysis({
       rateValue: data.t3MovingRate,
       rateEditable: true,
       onRateChange: set('t3MovingRate'),
-      quantityValue: existingUnits,
+      quantityValue: 0,
       quantityUnit: 'יח"ד',
       calculationBasis: 'שני כיוונים, כולל מע"מ',
-      total: data.t3MovingRate * existingUnits,
+      total: 0,
     },
     {
       key: 'lawyer',
@@ -377,10 +366,10 @@ export default function Section8EconomicAnalysis({
       rateValue: data.t3LawyerRate,
       rateEditable: true,
       onRateChange: set('t3LawyerRate'),
-      quantityValue: existingUnits,
+      quantityValue: 0,
       quantityUnit: 'יח"ד',
       calculationBasis: 'כולל מע"מ',
-      total: data.t3LawyerRate * existingUnits,
+      total: 0,
     },
     {
       key: 'maintenanceFund',
@@ -389,10 +378,10 @@ export default function Section8EconomicAnalysis({
       rateValue: data.t3MaintenanceFundRate,
       rateEditable: true,
       onRateChange: set('t3MaintenanceFundRate'),
-      quantityValue: existingUnits,
+      quantityValue: 0,
       quantityUnit: 'יח"ד',
       calculationBasis: 'לתקופה של 5 שנים (60 חודשים)',
-      total: data.t3MaintenanceFundRate * existingUnits * 60,
+      total: 0,
     },
   ]
 
@@ -577,9 +566,6 @@ export function computeSection8(
     totalOpenBalconies: number
     totalRoofBalconies: number
     totalUndergroundArea: number
-    existingUnits: number
-    existingCommercialArea: number
-    existingTotalBuiltArea: number
     newTotalUnits: number
     totalLeviesAndFees: number
     estimatedBettermentLevy: number
@@ -596,7 +582,6 @@ export function computeSection8(
     data.t1ParkingCompRate * data.t1ParkingCompQty +
     data.t1UndergroundRate * p.totalUndergroundArea +
     data.t1OutdoorDevRate * data.t1OutdoorDevQty +
-    data.t1DemolitionRate * p.existingTotalBuiltArea +
     data.t1PublicBuildingRate * data.t1PublicBuildingQty +
     data.t1LandscapeTotal
 
@@ -610,23 +595,16 @@ export function computeSection8(
     (data.t2BrokeragePct / 100) * p.developerRevenueExVat +
     (data.t2LegalPct / 100) * p.totalRevenueIncVat
 
-  const t3 =
-    data.t3ResRentRate * p.existingUnits * data.constructionMonths +
-    data.t3CommRentRate * p.existingCommercialArea * data.constructionMonths +
-    data.t3MovingRate * p.existingUnits +
-    data.t3LawyerRate * p.existingUnits +
-    data.t3MaintenanceFundRate * p.existingUnits * 60
-
   const t4 =
     (data.t4PurchaseTaxPct / 100) * data.t4PurchaseTaxBasis +
     data.t4VatServiceTotal +
     data.t4CapGainTotal +
     p.estimatedBettermentLevy
 
-  const t5 = (data.t5FinancingPct / 100) * (t1 + t2 + t3 + t4)
+  const t5 = (data.t5FinancingPct / 100) * (t1 + t2 + t4)
 
   return {
     directConstructionCosts: t1,
-    totalConstructionCosts: t1 + t2 + t3 + t4 + t5,
+    totalConstructionCosts: t1 + t2 + t4 + t5,
   }
 }

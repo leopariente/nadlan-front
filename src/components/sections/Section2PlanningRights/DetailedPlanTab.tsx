@@ -1,27 +1,16 @@
 import { Card } from '@/components/shared/Card'
 import { Field } from '@/components/shared/Field'
 import { inputClass } from '@/components/shared/formStyles'
-import { ComputedRow, Section1Row, InlineInputRow, KeyRow } from '@/components/shared/RowVariants'
+import { ComputedRow, KeyRow } from '@/components/shared/RowVariants'
 import type { Section2Data } from '@/types'
 
 interface Props {
   data: Section2Data
   onChange: (data: Section2Data) => void
-  registeredArea: number
-  existingResidentialSqm: number
-  existingUnits: number
-  existingCommercialSqm: number
   readOnly: boolean
 }
 
-export function DetailedPlanTab({
-  data,
-  onChange,
-  existingResidentialSqm,
-  existingUnits,
-  existingCommercialSqm,
-  readOnly,
-}: Props) {
+export function DetailedPlanTab({ data, onChange, readOnly }: Props) {
   function set<K extends keyof Section2Data>(key: K, value: Section2Data[K]) {
     onChange({ ...data, [key]: value })
   }
@@ -40,39 +29,9 @@ export function DetailedPlanTab({
     )
   }
 
-  // Residential derived
-  const residentialGross       = data.residentialMainArea + data.residentialServiceArea
-  const totalFloorplate        = data.residentialMainArea + data.densityUnits * data.mamadSqm
-  const existingWithBonus      = existingResidentialSqm + data.tenantBonusSqmPerUnit * existingUnits
-  const developerFloorplateSqm = totalFloorplate - existingWithBonus
-  const developerUnits         = data.densityUnits - existingUnits
-
-  // Commercial derived
-  const commercialGross        = data.commercialMainArea + data.commercialServiceArea
-  const commercialForSale      = commercialGross
-  const tenantCommercialSqm    = existingCommercialSqm * (1 + data.commercialTenantBonusPct / 100)
-  const developerCommercialSqm = commercialForSale - tenantCommercialSqm
-
-  const tenantBonusLabel = (
-    <span className="flex items-center gap-1.5">
-      <span>סה&quot;כ שטח מסחרי לדיירים בתמורה של</span>
-      <input
-        type="number"
-        min={0}
-        max={100}
-        disabled={readOnly}
-        value={data.commercialTenantBonusPct || ''}
-        placeholder="25"
-        onChange={e => set('commercialTenantBonusPct', parseFloat(e.target.value) || 0)}
-        className={
-          'w-12 rounded border border-slate-300 bg-white px-1.5 py-0.5 text-xs text-slate-700 text-center ' +
-          'focus:outline-none focus:ring-1 focus:ring-blue-500 ' +
-          'disabled:bg-slate-100 disabled:cursor-not-allowed'
-        }
-      />
-      <span>%</span>
-    </span>
-  )
+  const residentialGross = data.residentialMainArea + data.residentialServiceArea
+  const totalFloorplate  = data.residentialMainArea + data.densityUnits * data.mamadSqm
+  const commercialGross  = data.commercialMainArea + data.commercialServiceArea
 
   return (
     <>
@@ -92,25 +51,8 @@ export function DetailedPlanTab({
         <ComputedRow label='סה"כ שטח פלדלת בפרויקט (עיקרי + מס׳ יח"ד × ממ"ד)' value={totalFloorplate} />
 
         <div className="space-y-1.5">
-          <Section1Row label='סה"כ שטח דירתי קיים (לפי היתרי בנייה)' value={existingResidentialSqm} />
-          <Section1Row label='סה"כ יח"ד קיימות' value={existingUnits} unit='יח"ד' />
-        </div>
-
-        <InlineInputRow
-          label='תמורה למ"ר ליח"ד (מ"ר)'
-          value={data.tenantBonusSqmPerUnit}
-          onChange={v => set('tenantBonusSqmPerUnit', v)}
-          placeholder="6"
-          disabled={readOnly}
-        />
-
-        <div className="space-y-1.5">
-          <ComputedRow
-            label='סה"כ שטח דירתי קיים + תמורה (תמורה × יח"ד קיימות + שטח קיים)'
-            value={existingWithBonus}
-          />
-          <KeyRow label='סה"כ שטח לשיווק היזם (שטח פלדלת בניכוי שטח תמורה)' value={developerFloorplateSqm} />
-          <KeyRow label='סה"כ יח"ד לשיווק היזם (יח"ד כולל בניכוי יח"ד קיימות)' value={developerUnits} unit='יח"ד' />
+          <KeyRow label='סה"כ שטח לשיווק היזם' value={totalFloorplate} />
+          <KeyRow label='סה"כ יח"ד לשיווק היזם' value={data.densityUnits} unit='יח"ד' />
         </div>
       </Card>
 
@@ -122,10 +64,7 @@ export function DetailedPlanTab({
 
         <div className="space-y-1.5">
           <ComputedRow label='סה"כ שטח ברוטו למסחר (עיקרי + שירות)' value={commercialGross} />
-          <ComputedRow label="שטח לשיווק מסחר (נניח שנשווק את הכל)" value={commercialForSale} />
-          <Section1Row label="סה&quot;כ שטח מסחרי דיירים קיים" value={existingCommercialSqm} />
-          <ComputedRow label={tenantBonusLabel} value={tenantCommercialSqm} />
-          <KeyRow label="סה&quot;כ שטח מסחרי לשיווק היזם" value={developerCommercialSqm} />
+          <KeyRow label='סה"כ שטח מסחרי לשיווק היזם' value={commercialGross} />
         </div>
       </Card>
     </>

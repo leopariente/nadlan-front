@@ -8,25 +8,17 @@ import type { Section6Data } from '@/types'
 interface Props {
   data: Section6Data
   onChange: (data: Section6Data) => void
-  existingResidentialArea: number
-  existingUnits: number
-  existingCommercialArea: number
   newPrimaryResidentialArea: number
   newResidentialUnits: number
   newPrimaryCommercialArea: number
-  yad2PricePerSqm: number
 }
 
 export default function Section6BettermentLevy({
   data,
   onChange,
-  existingResidentialArea,
-  existingUnits,
-  existingCommercialArea,
   newPrimaryResidentialArea,
   newResidentialUnits,
   newPrimaryCommercialArea,
-  yad2PricePerSqm,
 }: Props) {
   const newStateTotal =
     newPrimaryResidentialArea * data.builtValuePerSqmResidential +
@@ -40,20 +32,9 @@ export default function Section6BettermentLevy({
   const finalNewStateValue =
     (newStateTotal - obligationsTotal) * deferralFactor * (data.siteReductionFactor / 100)
 
-  const totalExistingValue =
-    existingResidentialArea * yad2PricePerSqm +
-    existingCommercialArea * data.existingCommercialValuePerSqm
-
   return (
     <div className="space-y-5">
-      <Table1ExistingState
-        data={data}
-        onChange={onChange}
-        existingUnits={existingUnits}
-        existingResidentialArea={existingResidentialArea}
-        existingCommercialArea={existingCommercialArea}
-        yad2PricePerSqm={yad2PricePerSqm}
-      />
+      <Table1ExistingState />
       <Table2NewState
         data={data}
         onChange={onChange}
@@ -72,7 +53,6 @@ export default function Section6BettermentLevy({
         data={data}
         onChange={onChange}
         finalNewStateValue={finalNewStateValue}
-        totalExistingValue={totalExistingValue}
         deferralFactor={deferralFactor}
       />
     </div>
@@ -83,11 +63,8 @@ export default function Section6BettermentLevy({
 
 export function computeEstimatedBettermentLevy(
   data: Section6Data,
-  existingResidentialArea: number,
-  existingCommercialArea: number,
   newPrimaryResidentialArea: number,
   newPrimaryCommercialArea: number,
-  yad2PricePerSqm: number,
 ): number {
   const newStateTotal =
     newPrimaryResidentialArea * data.builtValuePerSqmResidential +
@@ -101,10 +78,5 @@ export function computeEstimatedBettermentLevy(
   const finalNewStateValue =
     (newStateTotal - obligationsTotal) * deferralFactor * (data.siteReductionFactor / 100)
 
-  const totalExistingValue =
-    existingResidentialArea * yad2PricePerSqm +
-    existingCommercialArea * data.existingCommercialValuePerSqm
-
-  const appreciation = finalNewStateValue - totalExistingValue
-  return appreciation * deferralFactor * (data.levyRate / 100)
+  return finalNewStateValue * deferralFactor * (data.levyRate / 100)
 }

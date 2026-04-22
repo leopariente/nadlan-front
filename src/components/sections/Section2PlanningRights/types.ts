@@ -18,8 +18,6 @@ export interface Section2Data {
   commercialServiceArea: number    // שטח שירות מסחר
   densityUnits: number             // סה"כ יח"ד לפי צפיפות
   mamadSqm: number                 // שטח ממ"ד ליח"ד (default: 12)
-  tenantBonusSqmPerUnit: number    // תמורה למ"ר ליח"ד (default: 6)
-  commercialTenantBonusPct: number // תמורה לדיירים מסחר (default: 25)
 
   // תכנית כוללנית fields
   generalPlan: GeneralPlanData

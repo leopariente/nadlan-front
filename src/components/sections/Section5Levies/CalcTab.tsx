@@ -4,47 +4,39 @@ import type { Section5Data } from '@/types'
 
 const fmtR = (n: number) => n.toLocaleString('he-IL', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 
-const EXISTING_CREDIT_FACTOR = 0.8   // קיזוז 80% משטח קיים
-const FLAT_RATE_PER_SQM      = 500   // ₪ למ"ר עילי (תעריף אחיד)
+const FLAT_RATE_PER_SQM = 500   // ₪ למ"ר עילי (תעריף אחיד)
 
 interface Props {
   data: Section5Data
   registeredArea: number
-  existingGrossSqm: number
-  existingUnits: number
   residentialGross: number
   commercialGross: number
   basementSqm: number
-  balconyTotalSqm: number
   densityUnits: number
 }
 
 export function CalcTab({
   data,
   registeredArea,
-  existingGrossSqm,
   residentialGross,
   commercialGross,
   basementSqm,
-  balconyTotalSqm,
   densityUnits,
 }: Props) {
   const { rates, useFlatRate } = data
 
-  const allSurface     = residentialGross + commercialGross + basementSqm + balconyTotalSqm
-  const existingCredit = existingGrossSqm * EXISTING_CREDIT_FACTOR
-  const netNew         = allSurface - existingCredit
-  const aboveGround    = residentialGross + commercialGross
+  const allSurface  = residentialGross + commercialGross + basementSqm
+  const aboveGround = residentialGross + commercialGross
 
   const levyRows = [
     { label: 'אגרות בנייה — על כלל השטחים',  area: allSurface,     rate: rates.constructionPermit, total: allSurface * rates.constructionPermit  },
     { label: 'היטל כביש — קרקע',              area: registeredArea, rate: rates.roadLand,            total: registeredArea * rates.roadLand           },
-    { label: 'היטל כביש — בנייה',             area: netNew,         rate: rates.roadBuilding,        total: netNew * rates.roadBuilding               },
+    { label: 'היטל כביש — בנייה',             area: allSurface,     rate: rates.roadBuilding,        total: allSurface * rates.roadBuilding           },
     { label: 'היטל מדרכה — קרקע',             area: registeredArea, rate: rates.sidewalkLand,        total: registeredArea * rates.sidewalkLand        },
-    { label: 'היטל מדרכה — בנייה',            area: netNew,         rate: rates.sidewalkBuilding,    total: netNew * rates.sidewalkBuilding            },
+    { label: 'היטל מדרכה — בנייה',            area: allSurface,     rate: rates.sidewalkBuilding,    total: allSurface * rates.sidewalkBuilding        },
     { label: 'היטל תיעול — קרקע',             area: registeredArea, rate: rates.drainageLand,        total: registeredArea * rates.drainageLand        },
-    { label: 'היטל תיעול — בנייה',            area: netNew,         rate: rates.drainageBuilding,    total: netNew * rates.drainageBuilding            },
-    { label: 'דמי הקמה תאגיד המים',           area: netNew,         rate: rates.waterAuthority,      total: netNew * rates.waterAuthority              },
+    { label: 'היטל תיעול — בנייה',            area: allSurface,     rate: rates.drainageBuilding,    total: allSurface * rates.drainageBuilding        },
+    { label: 'דמי הקמה תאגיד המים',           area: allSurface,     rate: rates.waterAuthority,      total: allSurface * rates.waterAuthority          },
   ]
 
   const subtotal   = levyRows.reduce((s, r) => s + r.total, 0)
@@ -57,9 +49,7 @@ export function CalcTab({
     { label: 'שטח מבונה למגורים (ברוטו)',          value: residentialGross, unit: 'מ"ר' },
     { label: 'שטח מבונה למסחר',                    value: commercialGross,  unit: 'מ"ר' },
     { label: 'שטח תת"ק',                           value: basementSqm,      unit: 'מ"ר' },
-    { label: 'מרפסות',                             value: balconyTotalSqm,  unit: 'מ"ר' },
     { label: 'יח"ד מגורים',                        value: densityUnits,     unit: 'יח׳' },
-    { label: 'סה"כ שטח קיים לקיזוז (80%)',         value: existingCredit,   unit: 'מ"ר' },
   ]
 
   return (

@@ -14,8 +14,6 @@ const EMPTY_UNDERGROUND_SPECIAL = { additionalSqm: 0, parkingSpots: 0, avgParkin
 export const INITIAL_SECTION1: Section1Data = {
   registeredArea: 0,
   ownershipShare: '',
-  existingUnits: 0,
-  floors: [],
 }
 
 export const INITIAL_SECTION2: Section2Data = {
@@ -26,8 +24,6 @@ export const INITIAL_SECTION2: Section2Data = {
   commercialServiceArea: 0,
   densityUnits: 0,
   mamadSqm: 12,
-  tenantBonusSqmPerUnit: 6,
-  commercialTenantBonusPct: 25,
   generalPlan: {
     coveragePct: 50,
     floors: 9,
@@ -78,7 +74,6 @@ export const INITIAL_SECTION6: Section6Data = {
   builtValuePerSqmResidential:   0,
   builtValuePerSqmCommercial:    0,
   builtValuePerSqmEmployment:    0,
-  existingCommercialValuePerSqm: 0,
   newPrimaryEmploymentArea:      0,
   publicSpaceDevelopment:        0,
   kindergartenConstruction:      0,

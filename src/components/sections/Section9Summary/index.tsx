@@ -4,7 +4,6 @@ import { Card } from '@/components/shared/Card'
 const fmtPct = (n: number) => n.toLocaleString('he-IL', { minimumFractionDigits: 1, maximumFractionDigits: 1 })
 
 interface Props {
-  existingUnits: number
   newTotalUnits: number
   totalFloorAreaProject: number
   compensationPerUnit: number
@@ -15,7 +14,6 @@ interface Props {
 }
 
 export default function Section9Summary({
-  existingUnits,
   newTotalUnits,
   totalFloorAreaProject,
   compensationPerUnit,
@@ -24,7 +22,6 @@ export default function Section9Summary({
   totalDeveloperRevenue,
   totalConstructionCosts,
 }: Props) {
-  const densityFactor     = existingUnits > 0 ? newTotalUnits / existingUnits : null
   const surplus           = totalDeveloperRevenue - totalConstructionCosts
   const profitOnCost      = totalConstructionCosts !== 0 ? (surplus / totalConstructionCosts) * 100 : null
   const profitOnRevenue   = totalDeveloperRevenue  !== 0 ? (surplus / totalDeveloperRevenue)  * 100 : null
@@ -37,24 +34,14 @@ export default function Section9Summary({
     label: string
     value: string
     kind: RowKind
-    signed?: boolean   // true → colour by isPositive
+    signed?: boolean
   }
 
   const rows: Row[] = [
     {
-      label: 'סה"כ דירות קיימות לפינוי בינוי',
-      value: `${fmt(existingUnits)} יח"ד`,
-      kind:  'display',
-    },
-    {
       label: 'סה"כ דירות חדשות',
       value: `${fmt(newTotalUnits)} יח"ד`,
       kind:  'display',
-    },
-    {
-      label: 'מקדם ציפוף ביח"ד',
-      value: densityFactor != null ? fmtPct(densityFactor) : '—',
-      kind:  'calc-neutral',
     },
     {
       label: 'יתרת דירות לשיווק היזם',

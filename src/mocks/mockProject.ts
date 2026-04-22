@@ -26,16 +26,6 @@ export const MOCK_PROJECT: ProjectSummary = {
 export const MOCK_SECTION1: Section1Data = {
   registeredArea: 1200,
   ownershipShare: 'בשלמות',
-  existingUnits: 24,
-  floors: [
-    { name: 'קרקע', use: 'מסחר',  floorArea: 280, balconyArea: 0   },
-    { name: 'א׳',   use: 'מגורים', floorArea: 380, balconyArea: 60  },
-    { name: 'ב׳',   use: 'מגורים', floorArea: 380, balconyArea: 60  },
-    { name: 'ג׳',   use: 'מגורים', floorArea: 380, balconyArea: 60  },
-    { name: 'ד׳',   use: 'מגורים', floorArea: 380, balconyArea: 60  },
-    { name: 'ה׳',   use: 'מגורים', floorArea: 380, balconyArea: 60  },
-    { name: 'ו׳',   use: 'מגורים', floorArea: 380, balconyArea: 60  },
-  ],
 }
 
 export const MOCK_SECTION2: Section2Data = {
@@ -46,8 +36,6 @@ export const MOCK_SECTION2: Section2Data = {
   commercialServiceArea: 70,
   densityUnits: 48,
   mamadSqm: 12,
-  tenantBonusSqmPerUnit: 6,
-  commercialTenantBonusPct: 25,
   generalPlan: {
     coveragePct: 50,
     floors: 9,
@@ -128,7 +116,6 @@ export const MOCK_SECTION6: Section6Data = {
   builtValuePerSqmResidential: 14000,
   builtValuePerSqmCommercial:  8000,
   builtValuePerSqmEmployment:  6000,
-  existingCommercialValuePerSqm: 7000,
   newPrimaryEmploymentArea:    0,
   publicSpaceDevelopment:      500_000,
   kindergartenConstruction:    300_000,

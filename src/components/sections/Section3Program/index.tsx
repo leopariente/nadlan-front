@@ -16,8 +16,6 @@ interface Props {
   onChange: (data: Section3Data) => void
   developerUnits: number
   developerFloorplateSqm: number
-  tenantUnits: number
-  tenantFloorplateSqm: number
   residentialGross: number
   commercialMainArea: number
   commercialServiceArea: number
@@ -28,11 +26,11 @@ export default function Section3Program({
   data,
   onChange,
   developerUnits,
-  tenantUnits,
   commercialMainArea,
   commercialServiceArea,
   readOnly = false,
 }: Props) {
+  const tenantUnits = 0
   const [activeTab, setActiveTab] = useState<TabKey>('above')
 
   return (

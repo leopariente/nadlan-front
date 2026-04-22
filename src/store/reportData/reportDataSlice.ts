@@ -60,10 +60,19 @@ const reportDataSlice = createSlice({
         state.fetchDealsStatus = 'idle'
         if (!state.sections) return
         const { tab } = action.meta.arg
+        const rows = action.payload
+        const valid = rows.filter(t => t.netAreaSqm > 0 && t.reportedPriceILS > 0)
+        const totalArea  = valid.reduce((s, t) => s + t.netAreaSqm, 0)
+        const totalPrice = valid.reduce((s, t) => s + t.reportedPriceILS, 0)
+        const avg = totalArea > 0 ? Math.round(totalPrice / totalArea) : 0
         if (tab === 'new') {
-          state.sections.section4.newApartments.transactions = action.payload
+          state.sections.section4.newApartments.transactions = rows
+          if (state.sections.section4.newApartments.selectedPricePerSqm === 0 && avg > 0)
+            state.sections.section4.newApartments.selectedPricePerSqm = avg
         } else {
-          state.sections.section4.secondaryApartments.transactions = action.payload
+          state.sections.section4.secondaryApartments.transactions = rows
+          if (state.sections.section4.secondaryApartments.selectedPricePerSqm === 0 && avg > 0)
+            state.sections.section4.secondaryApartments.selectedPricePerSqm = avg
         }
       })
       .addCase(fetchDeals.rejected, (state) => {

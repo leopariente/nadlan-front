@@ -126,32 +126,14 @@ export default function Report() {
   const { section1, section2, section3, section4, section5, section6, section7 } = sections
   const section8 = sections.section8
 
-  // Cross-section values derived from Section 1
-  const existingResidentialSqm = section1.floors
-    .filter(f => f.use === 'מגורים')
-    .reduce((sum, f) => sum + f.floorArea, 0)
-
-  const existingCommercialSqm = section1.floors
-    .filter(f => f.use === 'מסחר')
-    .reduce((sum, f) => sum + f.floorArea, 0)
-
-  const existingGrossSqm = section1.floors
-    .reduce((sum, f) => sum + f.floorArea + f.balconyArea, 0)
-
-  const balconyTotalSqm = section1.floors
-    .reduce((sum, f) => sum + f.balconyArea, 0)
-
   // Section 2 derived
   const s2ResidentialGross = section2.residentialMainArea + section2.residentialServiceArea
   const s2CommercialGross  = section2.commercialMainArea  + section2.commercialServiceArea
 
-  // Section 7 inputs — derived from sections 1, 2, and 4
-  const existingWithBonus      = existingResidentialSqm + section2.tenantBonusSqmPerUnit * section1.existingUnits
-  const totalFloorplate        = section2.residentialMainArea + section2.densityUnits * section2.mamadSqm
-  const developerFloorplateSqm = Math.max(0, totalFloorplate - existingWithBonus)
-  const developerUnits         = Math.max(0, section2.densityUnits - section1.existingUnits)
-  const tenantCommercialSqm    = existingCommercialSqm * (1 + section2.commercialTenantBonusPct / 100)
-  const developerCommercialSqm = Math.max(0, s2CommercialGross - tenantCommercialSqm)
+  // Vacant land — no existing units or buildings
+  const developerFloorplateSqm = section2.residentialMainArea + section2.densityUnits * section2.mamadSqm
+  const developerUnits         = section2.densityUnits
+  const developerCommercialSqm = s2CommercialGross
 
   const s4ResidentialPrice =
     section4.newApartments.selectedPricePerSqm > 0
@@ -160,17 +142,17 @@ export default function Report() {
   const s4CommercialPrice  =
     s4ResidentialPrice * (section4.commercial.commercialPctOfResidential / 100)
 
-  // Section 9 inputs — derived from sections 1, 2, 3, and 7
+  // Section 9 inputs — derived from sections 2, 3, and 7
   const s9TotalNewUnits          = section2.densityUnits
-  const s9TotalFloorAreaProject  = existingWithBonus + developerFloorplateSqm
-  const s9CompensationPerUnit    = existingWithBonus / (section1.existingUnits || 1)
+  const s9TotalFloorAreaProject  = developerFloorplateSqm
+  const s9CompensationPerUnit    = 0
   const s9VatFactor              = 1 + section7.vatPct / 100
   const s9ResRevenueK            = Math.round(developerFloorplateSqm * s4ResidentialPrice / 1000)
   const s9CommRevenueK           = Math.round(developerCommercialSqm * s4CommercialPrice  / 1000)
   const s9TotalDeveloperRevenue  = Math.round(s9ResRevenueK / s9VatFactor) + s9CommRevenueK
 
-  // Section 8 inputs — derived from sections 1, 2, 3, 5, 6, 7
-  const s3TenantDerived          = deriveRow(section3.tenantRow, section1.existingUnits)
+  // Section 8 inputs — derived from sections 2, 3, 5, 6, 7
+  const s3TenantDerived          = deriveRow(section3.tenantRow, 0)
   const s3DeveloperDerived       = deriveRow(section3.developerRow, developerUnits)
   const s8TotalGrossResidential  = s3TenantDerived.totalGross + s3DeveloperDerived.totalGross
   const s8TotalGrossCommercial   = section2.commercialMainArea + section2.commercialServiceArea
@@ -182,23 +164,17 @@ export default function Report() {
     specialUndergroundSqm(section3.underground.commercial) +
     specialUndergroundSqm(section3.underground.disabled) +
     specialUndergroundSqm(section3.underground.publicBuildings)
-  const s8ExistingTotalBuiltArea = section1.floors.reduce((s, f) => s + f.floorArea + f.balconyArea, 0)
   const s8TotalLeviesAndFees     = computeTotalLeviesAndFees(
     section5,
     section1.registeredArea,
-    existingGrossSqm,
     s2ResidentialGross,
     s2CommercialGross,
     0,
-    balconyTotalSqm,
   )
   const s8EstimatedBettermentLevy = computeEstimatedBettermentLevy(
     section6,
-    existingResidentialSqm,
-    existingCommercialSqm,
     section2.residentialMainArea,
     section2.commercialMainArea,
-    s4ResidentialPrice,
   )
   const s8VatFactor              = 1 + section7.vatPct / 100
   const s8TotalRevenueIncVat     = developerFloorplateSqm * s4ResidentialPrice + developerCommercialSqm * s4CommercialPrice
@@ -211,9 +187,6 @@ export default function Report() {
     totalOpenBalconies:        s8TotalOpenBalconies,
     totalRoofBalconies:        s8TotalRoofBalconies,
     totalUndergroundArea:      s8TotalUnderground,
-    existingUnits:             section1.existingUnits,
-    existingCommercialArea:    existingCommercialSqm,
-    existingTotalBuiltArea:    s8ExistingTotalBuiltArea,
     newTotalUnits:             section2.densityUnits,
     totalLeviesAndFees:        s8TotalLeviesAndFees,
     estimatedBettermentLevy:   s8EstimatedBettermentLevy,
@@ -230,7 +203,6 @@ export default function Report() {
           onChange={data => setSections(prev => ({ ...prev!, section1: data }))}
           gush={project?.gush ?? ''}
           helka={project?.helka ?? ''}
-          address={project?.address ?? ''}
         />
       )
       case 2: return (
@@ -238,9 +210,6 @@ export default function Report() {
           data={section2}
           onChange={data => setSections(prev => ({ ...prev!, section2: data }))}
           registeredArea={section1.registeredArea}
-          existingResidentialSqm={existingResidentialSqm}
-          existingUnits={section1.existingUnits}
-          existingCommercialSqm={existingCommercialSqm}
         />
       )
       case 3: return (
@@ -249,8 +218,6 @@ export default function Report() {
           onChange={data => setSections(prev => ({ ...prev!, section3: data }))}
           developerUnits={developerUnits}
           developerFloorplateSqm={developerFloorplateSqm}
-          tenantUnits={section1.existingUnits}
-          tenantFloorplateSqm={existingWithBonus / (section1.existingUnits || 1)}
           residentialGross={s2ResidentialGross}
           commercialMainArea={section2.commercialMainArea}
           commercialServiceArea={section2.commercialServiceArea}
@@ -269,12 +236,9 @@ export default function Report() {
           data={section5}
           onChange={data => setSections(prev => ({ ...prev!, section5: data }))}
           registeredArea={section1.registeredArea}
-          existingGrossSqm={existingGrossSqm}
-          existingUnits={section1.existingUnits}
           residentialGross={s2ResidentialGross}
           commercialGross={s2CommercialGross}
           basementSqm={0}
-          balconyTotalSqm={balconyTotalSqm}
           densityUnits={section2.densityUnits}
         />
       )
@@ -282,13 +246,9 @@ export default function Report() {
         <Section6BettermentLevy
           data={section6}
           onChange={data => setSections(prev => ({ ...prev!, section6: data }))}
-          existingResidentialArea={existingResidentialSqm}
-          existingUnits={section1.existingUnits}
-          existingCommercialArea={existingCommercialSqm}
           newPrimaryResidentialArea={section2.residentialMainArea}
           newResidentialUnits={section2.densityUnits}
           newPrimaryCommercialArea={section2.commercialMainArea}
-          yad2PricePerSqm={section4.secondaryApartments.selectedPricePerSqm}
         />
       )
       case 7: return (
@@ -311,9 +271,6 @@ export default function Report() {
           totalOpenBalconies={s8TotalOpenBalconies}
           totalRoofBalconies={s8TotalRoofBalconies}
           totalUndergroundArea={s8TotalUnderground}
-          existingUnits={section1.existingUnits}
-          existingCommercialArea={existingCommercialSqm}
-          existingTotalBuiltArea={s8ExistingTotalBuiltArea}
           newTotalUnits={section2.densityUnits}
           developerUnitsForSale={developerUnits}
           totalLeviesAndFees={s8TotalLeviesAndFees}
@@ -325,7 +282,6 @@ export default function Report() {
       )
       case 9: return (
         <Section9Summary
-          existingUnits={section1.existingUnits}
           newTotalUnits={s9TotalNewUnits}
           totalFloorAreaProject={s9TotalFloorAreaProject}
           compensationPerUnit={s9CompensationPerUnit}

@@ -22,9 +22,6 @@ interface Props {
   data: Section2Data
   onChange: (data: Section2Data) => void
   registeredArea: number
-  existingResidentialSqm: number
-  existingUnits: number
-  existingCommercialSqm: number
   readOnly?: boolean
 }
 
@@ -32,9 +29,6 @@ export default function Section2PlanningRights({
   data,
   onChange,
   registeredArea,
-  existingResidentialSqm,
-  existingUnits,
-  existingCommercialSqm,
   readOnly = false,
 }: Props) {
   return (
@@ -58,10 +52,6 @@ export default function Section2PlanningRights({
         <DetailedPlanTab
           data={data}
           onChange={onChange}
-          registeredArea={registeredArea}
-          existingResidentialSqm={existingResidentialSqm}
-          existingUnits={existingUnits}
-          existingCommercialSqm={existingCommercialSqm}
           readOnly={readOnly}
         />
       )}

@@ -7,18 +7,11 @@ interface Props {
   data: Section6Data
   onChange: (data: Section6Data) => void
   finalNewStateValue: number
-  totalExistingValue: number
   deferralFactor: number
 }
 
-export function Table5Appreciation({
-  data,
-  onChange,
-  finalNewStateValue,
-  totalExistingValue,
-  deferralFactor,
-}: Props) {
-  const appreciation = finalNewStateValue - totalExistingValue
+export function Table5Appreciation({ data, onChange, finalNewStateValue, deferralFactor }: Props) {
+  const appreciation = finalNewStateValue
   const appreciationWithDeferral = appreciation * deferralFactor
   const estimatedLevy = appreciationWithDeferral * (data.levyRate / 100)
 
@@ -34,19 +27,12 @@ export function Table5Appreciation({
         </div>
         <div className="flex items-center justify-between px-4 py-2.5 bg-slate-50">
           <span className="text-xs text-slate-500">סך שווי מצב קיים</span>
-          <span className="text-sm font-semibold text-slate-700 tabular-nums">
-            &#x20AA;{fmt(totalExistingValue)}
-          </span>
+          <span className="text-sm font-semibold text-slate-700 tabular-nums">&#x20AA;0</span>
         </div>
         <div className="flex items-center justify-between px-4 py-3 bg-amber-50">
           <span className="text-xs font-semibold text-amber-900">סך השבחה</span>
-          <span
-            className={
-              'text-sm font-bold tabular-nums ' +
-              (appreciation < 0 ? 'text-red-600' : 'text-amber-800')
-            }
-          >
-            {appreciation < 0 ? <>&minus;</> : null}&#x20AA;{fmt(Math.abs(appreciation))}
+          <span className="text-sm font-bold tabular-nums text-amber-800">
+            &#x20AA;{fmt(Math.abs(appreciation))}
           </span>
         </div>
         <div className="flex items-center justify-between px-4 py-2.5 bg-slate-50">
@@ -56,7 +42,6 @@ export function Table5Appreciation({
           </span>
         </div>
 
-        {/* Levy rate input */}
         <div className="flex items-center justify-between px-4 py-2 bg-white">
           <span className="text-xs text-slate-500">שיעור היטל השבחה</span>
           <div className="flex items-center gap-1.5">
@@ -73,7 +58,6 @@ export function Table5Appreciation({
           </div>
         </div>
 
-        {/* Key result */}
         <div className="flex items-center justify-between px-4 py-3 bg-blue-700 text-white">
           <span className="text-sm font-bold">אומדן היטל השבחה צפוי</span>
           <span className="text-base font-bold tabular-nums">&#x20AA;{fmt(estimatedLevy)}</span>

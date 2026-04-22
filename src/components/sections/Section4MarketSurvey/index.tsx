@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import type { Transaction } from '@/types'
 import { TabSwitcher } from '@/components/shared/TabSwitcher'
 import { TransactionsTab } from './TransactionsTab'
 import { CommercialTab } from './CommercialTab'
@@ -24,11 +25,28 @@ interface Props {
 
 export default function Section4MarketSurvey({ data, onChange, gush, helka, readOnly = false }: Props) {
   const [activeTab, setActiveTab] = useState<TabKey>('new')
+  const [noDealsFound, setNoDealsFound] = useState<Record<'new' | 'secondary', boolean>>({
+    new: false,
+    secondary: false,
+  })
   const dispatch = useAppDispatch()
   const generating = useAppSelector(s => s.reportData?.fetchDealsStatus === 'loading')
 
-  function handleGenerate(tab: 'new' | 'secondary') {
-    dispatch(fetchDeals({ gush, helka, tab }))
+  function calcAvgPriceSqm(rows: Transaction[]): number {
+    const valid = rows.filter(t => t.netAreaSqm > 0 && t.reportedPriceILS > 0)
+    const totalArea  = valid.reduce((s, t) => s + t.netAreaSqm, 0)
+    const totalPrice = valid.reduce((s, t) => s + t.reportedPriceILS, 0)
+    return totalArea > 0 ? Math.round(totalPrice / totalArea) : 0
+  }
+
+  async function handleGenerate(tab: 'new' | 'secondary') {
+    setNoDealsFound(p => ({ ...p, [tab]: false }))
+    try {
+      const res = await dispatch(fetchDeals({ gush, helka, tab })).unwrap()
+      setNoDealsFound(p => ({ ...p, [tab]: res.length === 0 }))
+    } catch {
+      // rejection handled by slice status
+    }
   }
 
   return (
@@ -43,14 +61,22 @@ export default function Section4MarketSurvey({ data, onChange, gush, helka, read
         <TransactionsTab
           transactions={data.newApartments.transactions}
           selectedPricePerSqm={data.newApartments.selectedPricePerSqm}
-          onTransactionsChange={rows =>
-            onChange({ ...data, newApartments: { ...data.newApartments, transactions: rows } })
-          }
+          onTransactionsChange={rows => {
+            const avg = calcAvgPriceSqm(rows)
+            onChange({
+              ...data,
+              newApartments: {
+                transactions: rows,
+                selectedPricePerSqm: data.newApartments.selectedPricePerSqm === 0 && avg > 0 ? avg : data.newApartments.selectedPricePerSqm,
+              },
+            })
+          }}
           onSelectedPriceChange={v =>
             onChange({ ...data, newApartments: { ...data.newApartments, selectedPricePerSqm: v } })
           }
           onGenerate={() => handleGenerate('new')}
           generating={generating}
+          noDealsFound={noDealsFound.new}
           readOnly={readOnly}
         />
       )}
@@ -59,14 +85,22 @@ export default function Section4MarketSurvey({ data, onChange, gush, helka, read
         <TransactionsTab
           transactions={data.secondaryApartments.transactions}
           selectedPricePerSqm={data.secondaryApartments.selectedPricePerSqm}
-          onTransactionsChange={rows =>
-            onChange({ ...data, secondaryApartments: { ...data.secondaryApartments, transactions: rows } })
-          }
+          onTransactionsChange={rows => {
+            const avg = calcAvgPriceSqm(rows)
+            onChange({
+              ...data,
+              secondaryApartments: {
+                transactions: rows,
+                selectedPricePerSqm: data.secondaryApartments.selectedPricePerSqm === 0 && avg > 0 ? avg : data.secondaryApartments.selectedPricePerSqm,
+              },
+            })
+          }}
           onSelectedPriceChange={v =>
             onChange({ ...data, secondaryApartments: { ...data.secondaryApartments, selectedPricePerSqm: v } })
           }
           onGenerate={() => handleGenerate('secondary')}
           generating={generating}
+          noDealsFound={noDealsFound.secondary}
           readOnly={readOnly}
         />
       )}
