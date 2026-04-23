@@ -30,7 +30,10 @@ export const refreshAccessToken = createAsyncThunk<string, void, { state: RootSt
   'auth/refresh',
   async (_arg, { getState, dispatch, rejectWithValue }) => {
     const refreshToken = getState().auth.refreshToken
-    if (!refreshToken) return rejectWithValue('no refresh token')
+    if (!refreshToken) {
+      dispatch(clearTokens())
+      return rejectWithValue('no refresh token')
+    }
     try {
       const res = await refresh(refreshToken)
       dispatch(setAccessToken(res.access_token))

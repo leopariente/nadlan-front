@@ -29,6 +29,6 @@ export default function ProtectedRoute({ children }: Props) {
   }, [dispatch, initializing])
 
   if (initializing) return null
-  if (!accessToken) return <Navigate to="/login" replace />
+  if (!accessToken || (isTokenExpired(accessToken) && !refreshToken)) return <Navigate to="/login" replace />
   return <>{children}</>
 }
