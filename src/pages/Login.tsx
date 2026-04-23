@@ -3,6 +3,7 @@ import { useNavigate, Navigate } from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { loginThunk } from '@/store/auth/authActions'
 import { inputClass } from '@/components/shared/formStyles'
+import { isTokenExpired } from '@/lib/utils'
 
 export default function Login() {
   const dispatch = useAppDispatch()
@@ -13,7 +14,7 @@ export default function Login() {
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
-  if (accessToken) return <Navigate to="/" replace />
+  if (accessToken && !isTokenExpired(accessToken)) return <Navigate to="/" replace />
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
