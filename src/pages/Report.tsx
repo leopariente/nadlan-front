@@ -10,7 +10,7 @@ import Section1ExistingState from '@/components/sections/Section1ExistingState'
 import Section2PlanningRights from '@/components/sections/Section2PlanningRights'
 import Section4MarketSurvey from '@/components/sections/Section4MarketSurvey'
 import Section5Levies, { computeTotalLeviesAndFees } from '@/components/sections/Section5Levies'
-import Section3Mix, { computeSection3Revenue } from '@/components/sections/Section3Mix'
+import Section3Mix, { buildDefaultSection3Units, computeSection3Revenue } from '@/components/sections/Section3Mix'
 import Section6BettermentLevy, { computeEstimatedBettermentLevy } from '@/components/sections/Section6BettermentLevy'
 import Section7InventoryValue from '@/components/sections/Section7InventoryValue'
 import Section8EconomicAnalysis, { computeSection8 } from '@/components/sections/Section8EconomicAnalysis'
@@ -86,6 +86,17 @@ export default function Report() {
       setSections(prev => prev ? { ...prev, section4: cachedSection4 } : prev)
     }
   }, [cachedSection4])
+
+  // Eagerly init section3 units so section9 פדיון is correct before section3 is visited
+  useEffect(() => {
+    if (!sections || sections.section3.units.length > 0) return
+    const { densityUnits, residentialMainArea } = sections.section2
+    if (densityUnits <= 0 || residentialMainArea <= 0) return
+    setSections(prev => prev ? {
+      ...prev,
+      section3: { units: buildDefaultSection3Units(densityUnits, residentialMainArea) },
+    } : prev)
+  }, [sections])
 
   const sectionLabel = SECTIONS.find(s => s.number === currentSection)?.label ?? ''
 

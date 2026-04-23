@@ -22,6 +22,20 @@ const BALCONY_AREA    = 12
 const PARKING_SQM     = 35
 const UNITS_PER_FLOOR = 8
 
+export function buildDefaultSection3Units(totalUnits: number, totalMainArea: number): UnitType[] {
+  const defSmall = Math.round(totalUnits * 0.20)
+  const defStd   = Math.round(totalUnits * 0.60)
+  const defLarge = totalUnits - defSmall - defStd
+  const avgArea  = totalMainArea / totalUnits
+  const rawSum   = defSmall * (avgArea * 0.80) + defStd * avgArea + defLarge * (avgArea * 1.25)
+  const f        = rawSum > 0 ? totalMainArea / rawSum : 1
+  return [
+    { id: crypto.randomUUID(), type: 'קטנה',   count: defSmall, mainArea: Math.round(avgArea * 0.80 * f * 10) / 10, priceMultiplier: 1.10 },
+    { id: crypto.randomUUID(), type: 'סטנדרט', count: defStd,   mainArea: Math.round(avgArea * f * 10)        / 10, priceMultiplier: 1.00 },
+    { id: crypto.randomUUID(), type: 'גדולה',  count: defLarge, mainArea: Math.round(avgArea * 1.25 * f * 10) / 10, priceMultiplier: 0.95 },
+  ]
+}
+
 export function computeSection3Revenue(data: Section3Data, pricePerSqm: number): number {
   const priceBalcony = pricePerSqm * 0.50
   let floorIdx = 0
@@ -55,19 +69,7 @@ export default function Section3Mix({
   useEffect(() => {
     if (initialized.current || data.units.length > 0 || !canCompute) return
     initialized.current = true
-    const defSmall = Math.round(totalUnits * 0.20)
-    const defStd   = Math.round(totalUnits * 0.60)
-    const defLarge = totalUnits - defSmall - defStd
-    const avgArea  = totalMainArea / totalUnits
-    const rawSum   = defSmall * (avgArea * 0.80) + defStd * avgArea + defLarge * (avgArea * 1.25)
-    const f        = rawSum > 0 ? totalMainArea / rawSum : 1
-    onChange({
-      units: [
-        { id: crypto.randomUUID(), type: 'קטנה',   count: defSmall, mainArea: Math.round(avgArea * 0.80 * f * 10) / 10, priceMultiplier: 1.10 },
-        { id: crypto.randomUUID(), type: 'סטנדרט', count: defStd,   mainArea: Math.round(avgArea * f * 10)        / 10, priceMultiplier: 1.00 },
-        { id: crypto.randomUUID(), type: 'גדולה',  count: defLarge, mainArea: Math.round(avgArea * 1.25 * f * 10) / 10, priceMultiplier: 0.95 },
-      ],
-    })
+    onChange({ units: buildDefaultSection3Units(totalUnits, totalMainArea) })
   }, [canCompute, data.units.length, onChange, totalMainArea, totalUnits])
 
   const totalAllUnits    = data.units.reduce((s, u) => s + u.count, 0)
