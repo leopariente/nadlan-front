@@ -49,8 +49,11 @@ export function ExtractRightsButton() {
       {status === 'extracted' && (
         <span className="text-sm text-green-600">הנתונים חולצו בהצלחה</span>
       )}
-      {status === 'error' && (
-        <span className="text-sm text-red-500">שגיאה בעיבוד הקובץ</span>
+      {/* {status === 'error' && ( */}
+        {/* <span className="text-sm text-red-500">שגיאה בעיבוד הקובץ</span> */}
+      {/* )} */}
+      {status == 'error' && (
+        <span className="text-sm text-red-500">זה עולה לי כסף גבר, לא תרבל כלכך בקלות</span>
       )}
     </div>
   )
