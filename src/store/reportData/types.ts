@@ -24,6 +24,7 @@ export interface ReportSections {
 export type LoadStatus = 'idle' | 'loading' | 'loaded' | 'error'
 export type SaveStatus = 'idle' | 'saving' | 'saved' | 'error'
 export type FetchDealsStatus = 'idle' | 'loading' | 'error'
+export type ExtractionStatus = 'idle' | 'extracting' | 'extracted' | 'error'
 
 export interface ReportDataState {
   currentReportId: string | null
@@ -32,4 +33,6 @@ export interface ReportDataState {
   loadStatus: LoadStatus
   saveStatus: SaveStatus
   fetchDealsStatus: FetchDealsStatus
+  extractionStatus: ExtractionStatus
+  extractionId: string | null
 }

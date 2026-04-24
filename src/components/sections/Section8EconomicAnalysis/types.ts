@@ -21,13 +21,6 @@ export interface Section8Data {
   t2ContingencyPct: number
   t2BrokeragePct: number
   t2LegalPct: number
-  // Table 3 - עלות דיירים
-  constructionMonths: number
-  t3ResRentRate: number
-  t3CommRentRate: number
-  t3MovingRate: number
-  t3LawyerRate: number
-  t3MaintenanceFundRate: number
   // Table 4 - עלויות מיסוי
   t4PurchaseTaxPct: number
   t4PurchaseTaxBasis: number
@@ -58,12 +51,6 @@ export const DEFAULT_SECTION8: Section8Data = {
   t2ContingencyPct: 0,
   t2BrokeragePct: 0,
   t2LegalPct: 0,
-  constructionMonths: 18,
-  t3ResRentRate: 0,
-  t3CommRentRate: 0,
-  t3MovingRate: 0,
-  t3LawyerRate: 0,
-  t3MaintenanceFundRate: 0,
   t4PurchaseTaxPct: 0,
   t4PurchaseTaxBasis: 0,
   t4VatServiceTotal: 0,

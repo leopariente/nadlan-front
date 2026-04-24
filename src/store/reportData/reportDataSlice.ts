@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { ReportDataState } from './types'
 import type { Section2Data, Section3Data, UnitType } from '@/types'
-import { createReport, fetchDeals, loadReport, saveReport } from './reportDataActions'
+import { createReport, extractRights, fetchDeals, loadReport, saveReport } from './reportDataActions'
 import { DEFAULT_SECTION8 } from '@/components/sections/Section8EconomicAnalysis/types'
 
 const initialState: ReportDataState = {
@@ -11,6 +11,8 @@ const initialState: ReportDataState = {
   loadStatus: 'idle',
   saveStatus: 'idle',
   fetchDealsStatus: 'idle',
+  extractionStatus: 'idle',
+  extractionId: null,
 }
 
 const reportDataSlice = createSlice({
@@ -94,6 +96,19 @@ const reportDataSlice = createSlice({
       })
       .addCase(fetchDeals.rejected, (state) => {
         state.fetchDealsStatus = 'error'
+      })
+      .addCase(extractRights.pending, (state) => {
+        state.extractionStatus = 'extracting'
+      })
+      .addCase(extractRights.fulfilled, (state, action) => {
+        state.extractionStatus = 'extracted'
+        state.extractionId = action.payload.extraction_id
+        if (state.sections) {
+          state.sections.section2 = action.payload.section2
+        }
+      })
+      .addCase(extractRights.rejected, (state) => {
+        state.extractionStatus = 'error'
       })
   },
 })

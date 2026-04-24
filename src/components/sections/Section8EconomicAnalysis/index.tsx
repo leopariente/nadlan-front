@@ -3,15 +3,13 @@ import { TabSwitcher } from '@/components/shared/TabSwitcher'
 import { CostTable } from './CostTable'
 import type { CostRowDef } from './CostTable'
 import { formatCurrency } from '@/lib/utils'
-import { inputClass } from '@/components/shared/formStyles'
 import type { Section8Data } from '@/types'
 
-type TabKey = 'direct' | 'indirect' | 'residents' | 'taxes' | 'financing'
+type TabKey = 'direct' | 'indirect' | 'taxes' | 'financing'
 
 const TABS: { key: TabKey; label: string }[] = [
   { key: 'direct',    label: 'עלות בנייה ישירה' },
   { key: 'indirect',  label: 'עלויות עקיפות'    },
-  { key: 'residents', label: 'עלות דיירים'       },
   { key: 'taxes',     label: 'עלויות מיסוי'      },
   { key: 'financing', label: 'עלויות מימון'      },
 ]
@@ -84,15 +82,13 @@ export default function Section8EconomicAnalysis({
     (data.t2BrokeragePct / 100) * developerRevenueExVat +
     (data.t2LegalPct / 100) * totalRevenueIncVat
 
-  const table3Total = 0
-
   const table4Total =
     (data.t4PurchaseTaxPct / 100) * data.t4PurchaseTaxBasis +
     data.t4VatServiceTotal +
     data.t4CapGainTotal +
     estimatedBettermentLevy
 
-  const tables1to4 = table1Total + table2Total + table3Total + table4Total
+  const tables1to4 = table1Total + table2Total + table4Total
   const table5Total = (data.t5FinancingPct / 100) * tables1to4
   const totalConstructionCosts = tables1to4 + table5Total
 
@@ -322,69 +318,6 @@ export default function Section8EconomicAnalysis({
     },
   ]
 
-  const table3Rows: CostRowDef[] = [
-    {
-      key: 'resRent',
-      label: 'שכ"ד דיור חלופי לדירות הפינוי',
-      rateUnit: '₪/יח"ד/חודש',
-      rateValue: data.t3ResRentRate,
-      rateEditable: true,
-      onRateChange: set('t3ResRentRate'),
-      quantityValue: 0,
-      quantityUnit: 'יח"ד',
-      calculationBasis: `יחידות קיימות למשך ${data.constructionMonths} חודשי הקמה`,
-      total: 0,
-    },
-    {
-      key: 'commRent',
-      label: 'שכ"ד דיור חלופי ליחידות המסחר',
-      rateUnit: '₪/מ"ר/חודש',
-      rateValue: data.t3CommRentRate,
-      rateEditable: true,
-      onRateChange: set('t3CommRentRate'),
-      quantityValue: 0,
-      quantityUnit: 'מ"ר',
-      calculationBasis: `יחידות קיימות למשך ${data.constructionMonths} חודשי הקמה`,
-      total: 0,
-    },
-    {
-      key: 'moving',
-      label: 'הוצאות העברה ואחסון הלוך חזור',
-      rateUnit: '₪/יח"ד',
-      rateValue: data.t3MovingRate,
-      rateEditable: true,
-      onRateChange: set('t3MovingRate'),
-      quantityValue: 0,
-      quantityUnit: 'יח"ד',
-      calculationBasis: 'שני כיוונים, כולל מע"מ',
-      total: 0,
-    },
-    {
-      key: 'lawyer',
-      label: 'עו"ד, שמאי מקרקעין ומפקח דיירים',
-      rateUnit: '₪/יח"ד',
-      rateValue: data.t3LawyerRate,
-      rateEditable: true,
-      onRateChange: set('t3LawyerRate'),
-      quantityValue: 0,
-      quantityUnit: 'יח"ד',
-      calculationBasis: 'כולל מע"מ',
-      total: 0,
-    },
-    {
-      key: 'maintenanceFund',
-      label: 'קרן אחזקה',
-      rateUnit: '₪/יח"ד/חודש',
-      rateValue: data.t3MaintenanceFundRate,
-      rateEditable: true,
-      onRateChange: set('t3MaintenanceFundRate'),
-      quantityValue: 0,
-      quantityUnit: 'יח"ד',
-      calculationBasis: 'לתקופה של 5 שנים (60 חודשים)',
-      total: 0,
-    },
-  ]
-
   const table4Rows: CostRowDef[] = [
     {
       key: 'purchaseTax',
@@ -448,7 +381,6 @@ export default function Section8EconomicAnalysis({
   const summaryItems = [
     { label: 'בנייה ישירה', value: table1Total },
     { label: 'עקיפות',      value: table2Total },
-    { label: 'דיירים',      value: table3Total },
     { label: 'מיסוי',       value: table4Total },
     { label: 'מימון',       value: table5Total },
   ]
@@ -479,34 +411,6 @@ export default function Section8EconomicAnalysis({
         />
       )}
 
-      {activeTab === 'residents' && (
-        <div className="space-y-4">
-          {/* Construction months — shared input above table */}
-          <div className="bg-white rounded-xl border border-slate-200 shadow-sm px-5 py-4 flex items-center gap-4 flex-wrap">
-            <label className="text-sm font-medium text-slate-700 whitespace-nowrap">
-              תקופת הקמה (חודשים)
-            </label>
-            <input
-              type="number"
-              min={1}
-              value={data.constructionMonths || ''}
-              placeholder="18"
-              className={`${inputClass} w-24`}
-              onChange={e =>
-                set('constructionMonths')(parseFloat(e.target.value) || 18)
-              }
-            />
-            <span className="text-xs text-slate-400">ברירת מחדל: 18 חודשים</span>
-          </div>
-          <CostTable
-            title="עלות דיירים"
-            rows={table3Rows}
-            totalLabel='סה"כ עלות דיירים'
-            totalValue={table3Total}
-          />
-        </div>
-      )}
-
       {activeTab === 'taxes' && (
         <CostTable
           title="עלויות מיסוי"
@@ -526,7 +430,7 @@ export default function Section8EconomicAnalysis({
       )}
 
       {/* Sub-totals strip */}
-      <div className="grid grid-cols-5 gap-2 sm:gap-3">
+      <div className="grid grid-cols-4 gap-2 sm:gap-3">
         {summaryItems.map(({ label, value }) => (
           <div
             key={label}
@@ -545,7 +449,7 @@ export default function Section8EconomicAnalysis({
         <div className="text-white">
           <div className="text-base font-bold">סה&quot;כ עלויות הקמה</div>
           <div className="text-xs opacity-70 mt-0.5">
-            כולל בנייה ישירה, עקיפות, דיירים, מיסוי ומימון
+            כולל בנייה ישירה, עקיפות, מיסוי ומימון
           </div>
         </div>
         <div className="text-white font-bold text-2xl tabular-nums whitespace-nowrap">

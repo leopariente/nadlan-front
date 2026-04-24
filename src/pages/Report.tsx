@@ -58,6 +58,8 @@ export default function Report() {
   const saveStatus = useAppSelector(s => s.reportData?.saveStatus ?? 'idle') as SaveStatus
   const cachedSections = useAppSelector(s => s.reportData?.sections)
   const cachedSection4 = useAppSelector(s => s.reportData?.sections?.section4 ?? null)
+  const extractionId   = useAppSelector(s => s.reportData?.extractionId ?? null)
+  const cachedSection2 = useAppSelector(s => s.reportData?.sections?.section2 ?? null)
   const project = useAppSelector(s => s.reportData?.project ?? null)
 
   // Reset local sections when navigating to a different report
@@ -86,6 +88,13 @@ export default function Report() {
       setSections(prev => prev ? { ...prev, section4: cachedSection4 } : prev)
     }
   }, [cachedSection4])
+
+  // Sync section2 from store when PDF extraction completes
+  useEffect(() => {
+    if (!extractionId || !cachedSection2) return
+    setSections(prev => prev ? { ...prev, section2: cachedSection2 } : prev)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [extractionId])
 
   // Eagerly init section3 units so section9 פדיון is correct before section3 is visited
   useEffect(() => {

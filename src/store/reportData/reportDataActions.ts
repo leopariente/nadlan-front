@@ -1,5 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
-import { reportDataApi, type CreateReportPayload, type ReportResponse } from './reportDataApi'
+import { reportDataApi, type CreateReportPayload, type ReportResponse, type ExtractionResult } from './reportDataApi'
 import type { ProjectSummary, Transaction } from '@/types'
 import type { ReportSections } from './types'
 
@@ -23,4 +23,9 @@ export const saveReport = createAsyncThunk<ProjectSummary, { id: string; section
 export const fetchDeals = createAsyncThunk<Transaction[], { gush: string; helka: string; tab: 'new' | 'secondary' }>(
   'reportData/fetchDeals',
   ({ gush, helka }) => api.fetchDeals({ gush, helka })
+)
+
+export const extractRights = createAsyncThunk<ExtractionResult, { reportId: string; file: File }>(
+  'reportData/extractRights',
+  ({ reportId, file }) => api.extractRights(reportId, file)
 )

@@ -2,6 +2,7 @@ import { Card } from '@/components/shared/Card'
 import { Field } from '@/components/shared/Field'
 import { inputClass } from '@/components/shared/formStyles'
 import type { Section1Data } from '@/types'
+import { ExtractRightsButton } from './ExtractRightsButton'
 
 interface Props {
   data: Section1Data
@@ -17,6 +18,8 @@ export default function Section1ExistingState({ data, onChange, gush, helka, rea
   }
 
   return (
+    <div className="space-y-4">
+    {!readOnly && <ExtractRightsButton />}
     <Card title="פרטי חלקה">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-4">
         <Field label="גוש">
@@ -51,5 +54,6 @@ export default function Section1ExistingState({ data, onChange, gush, helka, rea
         </Field>
       </div>
     </Card>
+    </div>
   )
 }
